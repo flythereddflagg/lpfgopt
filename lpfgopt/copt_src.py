@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # for windows and linux
 from ctypes import *
 from os import name as osname

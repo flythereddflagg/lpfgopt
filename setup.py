@@ -21,10 +21,11 @@ config = {
     'author_email'    : 'redddogjr@gmail.com',
     'url'             : 'http://www.r3eda.com/',
     'download_url'    : 'https://sourceforge.net/projects/leapfrog-optimizer/',
-    'install_requires': ['nose', 'numpy', 'ctypes', 'warnings'],
+    'install_requires': ['nose', 'numpy'],
     'packages'        : ['lpfgopt'],
     'scripts'         : [],
-    'long_description': readme()
+    'long_description': readme(),
+    'include_package_data': True
     }
 
 setup(**config)

@@ -1,1 +1,6 @@
 include README.rst
+include docs/*.txt
+include lpfgopt/*.dll
+include lpfgopt/*.pyd
+include lpfgopt/*.so
+include lpfgopt/*.exe
