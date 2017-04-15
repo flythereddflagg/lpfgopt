@@ -4,6 +4,7 @@
 # for windows and linux
 from ctypes import *
 from os import name as osname
+import os
 
 libname = "./liblpfgopt.so" if osname == "posix" else "./lpfgopt.dll"
 

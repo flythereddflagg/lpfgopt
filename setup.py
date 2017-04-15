@@ -6,25 +6,40 @@
 
 try:
     from setuptools import setup
-except ImportError:
+except ImportError    :
     from distutils.core import setup
 
-def readme():
+#from os import name as osname
+#libname = "./liblpfgopt.so" if osname == "posix" else "./lpfgopt.dll"    
+
+def readme()    :
     with open('README.rst') as f:
         return f.read()
 
+file_include = [
+    ('lpfgopt', 
+        [
+        'lpfgopt/lpfgopt.dll',
+        'lpfgopt/copt.pyd',
+        'lpfgopt/cyopt.pyd',
+        'lpfgopt/lpfgopt_test.exe'
+        ]
+    )
+    ]
+        
 config = {
-    'name'            : 'lpfgopt',
-    'description'     : 'Leap Frog Optimizer',
-    'version'         : '0.6.2',
-    'author'          : 'Mark Redd',
-    'author_email'    : 'redddogjr@gmail.com',
-    'url'             : 'http://www.r3eda.com/',
-    'download_url'    : 'https://sourceforge.net/projects/leapfrog-optimizer/',
-    'install_requires': ['nose', 'numpy'],
-    'packages'        : ['lpfgopt'],
-    'scripts'         : [],
-    'long_description': readme(),
+    'name'                : 'lpfgopt',
+    'description'         : 'Leap Frog Optimizer',
+    'version'             : '0.6.2',
+    'author'              : 'Mark Redd',
+    'author_email'        : 'redddogjr@gmail.com',
+    'url'                 : 'http://www.r3eda.com/',
+    'download_url'        : 'https://sourceforge.net/projects/leapfrog-optimizer/',
+    'install_requires'    : ['nose', 'numpy'],
+    'packages'            : ['lpfgopt'],
+    'scripts'             : [],
+    'data_files'          : file_include,
+    'long_description'    : readme(),
     'include_package_data': True
     }
 

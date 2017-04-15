@@ -3,9 +3,14 @@
 
 # for windows and linux
 from ctypes import *
-from os import name as osname
+from os import name as osname, path
 
-libname = "./liblpfgopt.so" if osname == "posix" else "./lpfgopt.dll"
+libname = "./liblpfgopt.so" if osname == "posix" else "lpfgopt.dll"
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+d1 = '\\'.join([dir_path, libname])
+print d1
 
 class array_2d(Structure):
     pass
@@ -18,7 +23,7 @@ array_2d._fields_ = [
 
 def minimize(f,ivls):
     
-    mydll = cdll.LoadLibrary(libname)
+    mydll = cdll.LoadLibrary(d1)
 
     ivl         = array_2d()
     ivl.rows    = 2
