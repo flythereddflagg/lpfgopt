@@ -19,9 +19,8 @@ def readme()    :
 file_include = [
     ('lpfgopt', 
         [
-        'lpfgopt/lpfgopt.dll',
-        'lpfgopt/copt.pyd',
-        'lpfgopt/cyopt.pyd',
+        'lpfgopt/copt.so',
+        'lpfgopt/cyopt.so',
         'lpfgopt/lpfgopt_test.exe'
         ]
     )

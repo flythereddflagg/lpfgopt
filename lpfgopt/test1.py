@@ -1,5 +1,5 @@
-from lpfgopt.copt  import minimize
-from lpfgopt.cyopt import minimize as min1
+from copt  import minimize
+from cyopt import minimize as min1
 
 def _f_test(x): return 2.0 * x[0]**2 + x[1]**2 + 3.0
 
