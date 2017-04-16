@@ -17,7 +17,9 @@ make clean
 clear
 make
 echo ""
-./lpfg_test.exe
+./lpfgopt_test.exe
+
+drmemory -logdir ./ lpfgopt_test.exe
 
 } ElseIf ($p1 -eq "clean_mem"){ # Clean memory checking
 clear

@@ -155,7 +155,8 @@ double* LPFGOPTCALL minimize(double (*f1_ptr)(double*), array_2d* int_1,
               int npts, int nvars)
 {
 /* Minimize function that runs the leap_frog algorithm to
-   minimize f1_ptr on the intervals on int_1 */
+   minimize f1_ptr on the intervals on int_1 
+   'nvars' is the number of decision variables*/
     int bi;
     int wi;
     int iter;
@@ -194,7 +195,7 @@ double* LPFGOPTCALL minimize(double (*f1_ptr)(double*), array_2d* int_1,
         } // If maxit is reached warn user 
     
     
-    double* best = (double*) malloc(nvars * sizeof(double));
+    double* best = (double*) malloc((nvars + 1) * sizeof(double));
     
     for (dvi = 0; dvi < nvars + 1; dvi++){
         best[dvi] = pt_set->array[bi][dvi];

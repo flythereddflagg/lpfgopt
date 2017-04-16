@@ -13,7 +13,7 @@ double f1(double* x)
 {
 /* Test function to be optimized */
     double x2 = x[1];
-    double y  = x[0] * x[0] * 2.0 + pow(x2,2.0) + 3.0;
+    double y  = x[0] * x[0] * 2.0 + pow(x2,2.0) + x[2] + 3.0;
     return y;
 }
 
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     array_2d* int_1;
     int i;
     int nx = 20;
-    int nvars = 2;
+    int nvars = 3;
     double (*f1_ptr)(double*);
     double* best;
     f1_ptr = &f1;
@@ -32,6 +32,8 @@ int main(int argc, char** argv)
     int_1->array[0][1] =  10.0;
     int_1->array[1][0] = -10.0;
     int_1->array[1][1] =  10.0;
+    int_1->array[2][0] = -10.0;
+    int_1->array[2][1] =  10.0;
     
     
     best = minimize(f1_ptr, int_1, nx, nvars);

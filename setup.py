@@ -9,23 +9,35 @@ try:
 except ImportError    :
     from distutils.core import setup
 
-#from os import name as osname
-#libname = "./liblpfgopt.so" if osname == "posix" else "./lpfgopt.dll"    
+from os import name as osname, system
 
-def readme()    :
+if osname == "posix":
+    # copy shared object file to the /lib folder
+    system("cp ./lpfgopt/liblpfgopt.so /lib")
+    file_include = {
+        'lpfgopt': [
+            'lpfgopt/copt.so',
+            'lpfgopt/cyopt.so',
+            'lpfgopt/lpfgopt_test.exe'
+            ]
+        }
+elif osname == "nt":
+    file_include = {
+        'lpfgopt': [
+            'lpfgopt/lpfgopt.dll',
+            'lpfgopt/copt.pyd',
+            'lpfgopt/cyopt.pyd',
+            'lpfgopt/lpfgopt_test.exe'
+            ]
+        }
+else:
+    raise OSError("This operating system is not supported under the current "\
+        "version of lpfgopt.")
+
+def readme():
     with open('README.rst') as f:
         return f.read()
 
-file_include = [
-    ('lpfgopt', 
-        [
-        'lpfgopt/copt.so',
-        'lpfgopt/cyopt.so',
-        'lpfgopt/lpfgopt_test.exe'
-        ]
-    )
-    ]
-        
 config = {
     'name'                : 'lpfgopt',
     'description'         : 'Leap Frog Optimizer',
@@ -35,9 +47,9 @@ config = {
     'url'                 : 'http://www.r3eda.com/',
     'download_url'        : 'https://sourceforge.net/projects/leapfrog-optimizer/',
     'install_requires'    : ['nose', 'numpy'],
-    'packages'            : ['lpfgopt'],
+    'packages'            : ['lpfgopt', 'tests'],
     'scripts'             : [],
-    'data_files'          : file_include,
+    'package_data'        : file_include,
     'long_description'    : readme(),
     'include_package_data': True
     }
