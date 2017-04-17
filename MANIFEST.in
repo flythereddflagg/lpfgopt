@@ -3,4 +3,5 @@ include docs/*.txt
 include lpfgopt/*.dll
 include lpfgopt/*.pyd
 include lpfgopt/*.so
+include lpfgopt/*.dylib
 include lpfgopt/*.exe

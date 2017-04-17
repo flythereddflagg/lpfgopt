@@ -9,7 +9,7 @@ set -e
 
 make clean
 make
-sudo cp liblpfgopt.so /lib
+#sudo cp liblpfgopt.so /lib
 
 python csetup.py build_ext
 python cysetup.py build_ext

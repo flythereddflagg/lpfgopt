@@ -631,7 +631,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "lpfgopt\\cyopt.pyx",
+  "lpfgopt/cyopt.pyx",
 };
 
 /*--- Type declarations ---*/
@@ -1120,11 +1120,10 @@ static const char __pyx_k_number_of_cols[] = "number_of_cols";
 static const char __pyx_k_main_locals_test[] = "_main.<locals>.test";
 static const char __pyx_k_lfsolve_locals_f_obj[] = "lfsolve.<locals>.f_obj";
 static const char __pyx_k_file_name_lpfgopt_py_title_Leap[] = "\nfile name      : lpfgopt.py\ntitle          : Leap Frog Optimizer\nversion        : 0.6.2 ALPHA\nlast modified  : 11 April 2017 \nauthor         : Mark Redd\nemail          : redddogjr@gmail.com\n\nwritten for python version: 2\n\noptimizer algorithm website: http://www.r3eda.com/\n\nabout:\n\n    This optimizer was written based on the algorithm published by\n    Dr. R. Russell Rhinehart.\n\n    A full explanation of the algorithm can be found at the following URL:\n\n    http://www.r3eda.com/leapfrogging-optimization-algorithm/\n\n    The following are \"key references\" published on\n    the optimization website explaining the technique:\n\n      - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar,\n        \342\200\234Leapfrogging and Synoptic Leapfrogging: a new optimization approach\342\200\235,\n        Computers & Chemical Engineering, Vol. 40, 11 May 2012, pp. 67-81.\n\n      - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart,\n        \342\200\234Improved Initialization of Players in Leapfrogging Optimization\342\200\235,\n        Computers & Chemical Engineering, Vol. 60, 2014, 426-429.\n\n      - Rhinehart, R. R.,\n        \342\200\234Convergence Criterion in Optimilsation of Stochastic Processes\342\200\235,\n        Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.\n\nHow to use the optimizer:\n    Needed from user: Intervals for all variables, the function that needs to be\n    minimized, other constraints\n";
-static const char __pyx_k_C_Users_Jilly_Documents_Mark_pro[] = "C:\\Users\\Jilly\\Documents\\Mark\\programming\\git_repo\\lpfgopt\\lpfgopt\\cyopt.pyx";
+static const char __pyx_k_home_redddog_Documents_programm[] = "/home/redddog/Documents/programming/git_repos/lpfgopt/lpfgopt/cyopt.pyx";
 static const char __pyx_k_Initial_guess_x0_or_intervals_mu[] = "Initial guess (x0) or intervals must be specified.";
 static const char __pyx_k_Optimizer_Maximum_Iterations_Exc[] = "Optimizer: Maximum Iterations Exceeded";
 static const char __pyx_k_Solver_Maximum_Iterations_Exceed[] = "Solver: Maximum Iterations Exceeded. \nSolver was unable tobracket the root.";
-static PyObject *__pyx_kp_s_C_Users_Jilly_Documents_Mark_pro;
 static PyObject *__pyx_kp_s_Initial_guess_x0_or_intervals_mu;
 static PyObject *__pyx_kp_s_Optimizer_Maximum_Iterations_Exc;
 static PyObject *__pyx_n_s_RuntimeWarning;
@@ -1154,6 +1153,7 @@ static PyObject *__pyx_n_s_final_error;
 static PyObject *__pyx_n_s_full_output;
 static PyObject *__pyx_n_s_gen_pt_set;
 static PyObject *__pyx_n_s_get_new_w;
+static PyObject *__pyx_kp_s_home_redddog_Documents_programm;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_index1;
@@ -5604,7 +5604,6 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_k_C_Users_Jilly_Documents_Mark_pro, sizeof(__pyx_k_C_Users_Jilly_Documents_Mark_pro), 0, 0, 1, 0},
   {&__pyx_kp_s_Initial_guess_x0_or_intervals_mu, __pyx_k_Initial_guess_x0_or_intervals_mu, sizeof(__pyx_k_Initial_guess_x0_or_intervals_mu), 0, 0, 1, 0},
   {&__pyx_kp_s_Optimizer_Maximum_Iterations_Exc, __pyx_k_Optimizer_Maximum_Iterations_Exc, sizeof(__pyx_k_Optimizer_Maximum_Iterations_Exc), 0, 0, 1, 0},
   {&__pyx_n_s_RuntimeWarning, __pyx_k_RuntimeWarning, sizeof(__pyx_k_RuntimeWarning), 0, 0, 1, 1},
@@ -5634,6 +5633,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_full_output, __pyx_k_full_output, sizeof(__pyx_k_full_output), 0, 0, 1, 1},
   {&__pyx_n_s_gen_pt_set, __pyx_k_gen_pt_set, sizeof(__pyx_k_gen_pt_set), 0, 0, 1, 1},
   {&__pyx_n_s_get_new_w, __pyx_k_get_new_w, sizeof(__pyx_k_get_new_w), 0, 0, 1, 1},
+  {&__pyx_kp_s_home_redddog_Documents_programm, __pyx_k_home_redddog_Documents_programm, sizeof(__pyx_k_home_redddog_Documents_programm), 0, 0, 1, 0},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_index1, __pyx_k_index1, sizeof(__pyx_k_index1), 0, 0, 1, 1},
@@ -5773,7 +5773,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__7 = PyTuple_Pack(2, __pyx_n_s_x, __pyx_n_s_args); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 247, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
-  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_VARARGS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_f_obj, 247, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 247, __pyx_L1_error)
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_VARARGS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_f_obj, 247, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 247, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":253
  *     if x0 == None and intervals == None:
@@ -5840,7 +5840,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__14 = PyTuple_Pack(1, __pyx_n_s_x); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 318, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_test, 318, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 318, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_test, 318, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 318, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":49
  * from numpy import prod, abs as npabs, sum as npsum, argsort, zeros, array
@@ -5852,7 +5852,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__17 = PyTuple_Pack(10, __pyx_n_s_b, __pyx_n_s_w, __pyx_n_s_pt_set, __pyx_n_s_rel, __pyx_n_s_norm1, __pyx_n_s_norm2, __pyx_n_s_err_obj, __pyx_n_s_dist_sum, __pyx_n_s_i, __pyx_n_s_dist); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(4, 0, 10, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_err_calc, 49, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(4, 0, 10, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_err_calc, 49, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 49, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":84
  * 
@@ -5864,7 +5864,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__19 = PyTuple_Pack(2, __pyx_n_s_pt_set, __pyx_n_s_index1); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_eval_bw, 84, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_eval_bw, 84, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 84, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":95
  * 
@@ -5876,7 +5876,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__21 = PyTuple_Pack(9, __pyx_n_s_f, __pyx_n_s_intervals, __pyx_n_s_points, __pyx_n_s_constraints, __pyx_n_s_args, __pyx_n_s_number_of_cols, __pyx_n_s_pt_set, __pyx_n_s_n, __pyx_n_s_v); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(5, 0, 9, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_gen_pt_set, 95, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(5, 0, 9, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_gen_pt_set, 95, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 95, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":126
  * 
@@ -5888,7 +5888,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__23 = PyTuple_Pack(9, __pyx_n_s_f, __pyx_n_s_b, __pyx_n_s_w, __pyx_n_s_intvl, __pyx_n_s_args, __pyx_n_s_n_vars, __pyx_n_s_inputs, __pyx_n_s_i, __pyx_n_s_new_interval); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
-  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(5, 0, 9, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_get_new_w, 126, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(5, 0, 9, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_get_new_w, 126, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 126, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":151
  * 
@@ -5900,7 +5900,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__25 = PyTuple_Pack(17, __pyx_n_s_f, __pyx_n_s_intervals, __pyx_n_s_args, __pyx_n_s_full_output, __pyx_n_s_points, __pyx_n_s_constraints, __pyx_n_s_tol, __pyx_n_s_rel, __pyx_n_s_maxit, __pyx_n_s_pt_set, __pyx_n_s_iters, __pyx_n_s_bi, __pyx_n_s_wi, __pyx_n_s_b, __pyx_n_s_w, __pyx_n_s_w_new, __pyx_n_s_err); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
   __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(9, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_minimize, 151, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(9, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_minimize, 151, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 151, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":211
  *         return b
@@ -5912,7 +5912,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__27 = PyTuple_Pack(18, __pyx_n_s_f, __pyx_n_s_x0, __pyx_n_s_intervals, __pyx_n_s_args, __pyx_n_s_full_output, __pyx_n_s_points, __pyx_n_s_constraints, __pyx_n_s_tol, __pyx_n_s_s_step, __pyx_n_s_maxit, __pyx_n_s_f_obj, __pyx_n_s_f_obj, __pyx_n_s_it1, __pyx_n_s_nvs, __pyx_n_s_spread, __pyx_n_s_i, __pyx_n_s_root, __pyx_n_s_root_err); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__27);
   __Pyx_GIVEREF(__pyx_tuple__27);
-  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(10, 0, 18, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_lfsolve, 211, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(10, 0, 18, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_lfsolve, 211, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 211, __pyx_L1_error)
 
   /* "lpfgopt/cyopt.pyx":315
  * #        pass
@@ -5924,7 +5924,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__29 = PyTuple_Pack(4, __pyx_n_s_test, __pyx_n_s_test, __pyx_n_s_int1, __pyx_n_s_x); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
   __Pyx_GIVEREF(__pyx_tuple__29);
-  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(0, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_C_Users_Jilly_Documents_Mark_pro, __pyx_n_s_main_2, 315, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 315, __pyx_L1_error)
+  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(0, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_redddog_Documents_programm, __pyx_n_s_main_2, 315, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
