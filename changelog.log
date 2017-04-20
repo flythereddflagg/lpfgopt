@@ -5,6 +5,7 @@ changes to version 0.6.2:
  - numpy additions
  - private functions
  - implimentation and integration with C
+ - MIT Licence
 
 to be added:
  - implimentation in python 3 - Ongoing
