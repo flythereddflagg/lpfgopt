@@ -7,11 +7,11 @@ clear
 make clean
 clear
 make
-python csetup.py build_ext
-python cysetup.py build_ext
-Copy-Item ".\build\lib.win-amd64-2.7\lpfgopt\*" ".\"
-python csetup.py clean
-python cysetup.py clean
+python ".\cython\csetup.py" build_ext
+python ".\cython\cysetup.py" build_ext
+Copy-Item ".\build\lib.win-amd64-2.7\*" ".\"
+python ".\cython\csetup.py" clean
+python ".\cython\cysetup.py" clean
 echo ""
 ./lpfgopt_test.exe
 python test1.py
@@ -20,9 +20,10 @@ python test1.py
 make clean
 clear
 make
-python csetup.py build_ext
-python cysetup.py build_ext
-Copy-Item ".\build\lib.win-amd64-2.7\lpfgopt\*" ".\"
-python csetup.py clean
-python cysetup.py clean
+python ".\cython\csetup.py" build_ext
+python ".\cython\cysetup.py" build_ext
+Copy-Item ".\build\lib.win-amd64-2.7\*" ".\"
+python ".\cython\csetup.py" clean
+python ".\cython\cysetup.py" clean
+rm -r build 
 }

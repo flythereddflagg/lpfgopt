@@ -3,5 +3,5 @@ from Cython.Build import cythonize
 
 setup(
     name = 'copt',
-    ext_modules = cythonize("copt.pyx"),
+    ext_modules = cythonize("./cython/copt.pyx"),
     )

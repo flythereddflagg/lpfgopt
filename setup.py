@@ -9,11 +9,9 @@ try:
 except ImportError    :
     from distutils.core import setup
 
-from os import name as osname, system
+from os import name as osname
 
 if osname == "posix":
-    # copy shared object file to the /lib folder
-    system("cp ./lpfgopt/liblpfgopt.so /lib")
     file_include = {
         'lpfgopt': [
             'lpfgopt/copt.so',
@@ -35,14 +33,14 @@ else:
         "version of lpfgopt.")
 
 def readme():
-    with open('README.rst') as f:
+    with open('README.md') as f:
         return f.read()
 
 config = {
     'name'                : 'lpfgopt',
     'description'         : 'Leap Frog Optimizer',
     'version'             : '0.6.2',
-    'author'              : 'Mark Redd',
+    'author'              : 'Mark E. Redd',
     'author_email'        : 'redddogjr@gmail.com',
     'url'                 : 'http://www.r3eda.com/',
     'download_url'        : 'https://sourceforge.net/projects/leapfrog-optimizer/',

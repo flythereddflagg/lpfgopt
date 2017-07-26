@@ -27,7 +27,7 @@ linux: python-so exe-lin
 
 python-dll: src/$(DLL).c include/$(DLL).h
 	$(WIN_DETAILS) -i res/$(DETAILS).rc -o obj/$(DETAILS).o
-	$(CC) $(CFLAGS) -c -o obj/$(DLL).o src/$(DLL).c -D $(EXPORT_CALL) -D $(PY_OPT) -I.\include
+	$(CC) $(CFLAGS) -c -o obj/$(DLL).o src/$(DLL).c -D $(EXPORT_CALL) -D $(PY_OPT) -I ./include
 	$(CC) -o $(DLL).dll obj/$(DLL).o obj/$(DETAILS).o -s -shared -Wl,--subsystem,windows,--out-implib,lib\lib$(DLL).a
 
 python-so: src/$(SO).c include/$(SO).h
@@ -65,9 +65,8 @@ clean-windows:
 	del *.exe
 	del *.dll
 	del *.pyd
-	del *.c
+	del cython\*.c
 	del lib\*.a
-	rmdir build /s /q
 
 .PHONY: clean
 clean: $(CLEANER)

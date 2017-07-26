@@ -1,4 +1,10 @@
-changes to version 0.6.2:
+# changes to version 0.7.0:
+
+
+## to be added:
+
+
+# changes to version 0.6.2:
  - detailed documentation in source script
  - args
  - imports specified
@@ -7,7 +13,7 @@ changes to version 0.6.2:
  - implimentation and integration with C
  - MIT Licence
 
-to be added:
+## to be added:
  - implimentation in python 3 - Ongoing
  - integer optimizer
  - integer optimizer in C
