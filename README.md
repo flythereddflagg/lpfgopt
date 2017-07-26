@@ -58,14 +58,15 @@ Otherwise, run the follwing commands from Powershell in the ".\lpfgopt\" path:
 > cd ..
 > python setup.py install
 ```
-The software should install correctly. You may validate the installation by executing the following commands:
+3. The software should install correctly. You may validate the installation by executing the following commands:
 ```python
 > python
 >>> import lpfgopt
 >>> lpfgopt.__version__
 'X.X.X'
 ```
-If the version number appears below, congratulations! You have sucessfully installed the Leap Frog Optimizer package on your windows machine!
+If the version number appears below, congratulations! You have sucessfully installed the Leap Frog Optimizer 
+package on your windows machine!
 
 <b>MinGW/GCC make options:</b><br/>
 The following are the 'GNU make' commands that will make the needed files in 
