@@ -61,10 +61,11 @@ clean-linux:
 
 .PHONY: clean-windows
 clean-windows:
-	del obj\*.o
 	del *.exe
 	del *.dll
 	del *.pyd
+	del *.pyc
+	del obj\*.o
 	del cython\*.c
 	del lib\*.a
 

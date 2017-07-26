@@ -1,5 +1,5 @@
 # changes to version 0.7.0:
-
+ - Reorganize code to appropriate folders
 
 ## to be added:
 

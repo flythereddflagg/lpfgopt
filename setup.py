@@ -10,6 +10,7 @@ except ImportError    :
     from distutils.core import setup
 
 from os import name as osname
+import lpfgopt
 
 if osname == "posix":
     file_include = {
@@ -39,7 +40,7 @@ def readme():
 config = {
     'name'                : 'lpfgopt',
     'description'         : 'Leap Frog Optimizer',
-    'version'             : '0.6.2',
+    'version'             : lpfgopt.__version__,
     'author'              : 'Mark E. Redd',
     'author_email'        : 'redddogjr@gmail.com',
     'url'                 : 'http://www.r3eda.com/',
