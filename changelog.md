@@ -1,5 +1,6 @@
 # changes to version 0.7.0:
  - Reorganize code to appropriate folders
+ - Update README.md with installation instructions
 
 ## to be added:
 

@@ -56,7 +56,7 @@ exe-lin: src/$(SO).c include/$(SO).h lib$(SO).so
 
 .PHONY: clean-linux
 clean-linux:
-	rm -f obj/*.o *.exe *.so lib/*.a *.c
+	rm -f obj/*.o *.exe *.so lib/*.a cython/*.c *.pyc *.conf
 	rm -rf build
 
 .PHONY: clean-windows

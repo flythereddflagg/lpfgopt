@@ -2,20 +2,12 @@
 
 set -e
 
-#if [[ $(/usr/bin/id -u) -ne 0 ]]; then
-#    echo "Permission Denied: Are you root?"
-#    exit
-#fi
-
-make clean
-make
-#sudo cp liblpfgopt.so /lib
-
-python csetup.py build_ext
-python cysetup.py build_ext
-
-cp ./build/lib.linux-x86_64-2.7/lpfgopt/*.so ./
-
-python csetup.py clean
-python cysetup.py clean
+make clean                                # clean up old files
+make                                      # Builds with Python options.
+python "./cython/csetup.py" build_ext     # Build C extentions from Python source to optimize speed
+python "./cython/cysetup.py" build_ext
+cp build/lib.linux-x86_64-2.7/* .         # Copy compiled python files to the main directory for use
+python "./cython/csetup.py" clean         # Clean up build files
+python "./cython/cysetup.py" clean
+rm -rf build                              # Delete the rest of the build
 
