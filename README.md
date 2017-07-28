@@ -11,7 +11,6 @@ email          : redddogjr@gmail.com <br/>
 
 This optimizer was written based on the algorithm published by
 Dr. R. Russell Rhinehart.
-
 A full explanation of the algorithm can be found at the following URL:
 
 http://www.r3eda.com/leapfrogging-optimization-algorithm/
@@ -55,7 +54,7 @@ Otherwise, run the follwing commands from Powershell in the `lpfgopt\lpfgopt\` p
 > python ".\cython\cysetup.py" clean
 > rm -r build                                   # Delete the rest of the build
 ```
-The cython commands may require you to add the C++ compiler from microsoft for Python 2.7. If this is the case follow the link to: https://www.microsoft.com/en-us/download/details.aspx?id=44266
+The cython commands may require you to add the C++ compiler from microsoft for Python 2.7. If this is the case follow the link to: https://www.microsoft.com/en-us/download/details.aspx?id=44266 and download and install the compiler.
 
 2. Return to the main directory where "setup.py" is located and run the following command"
 ```bash
@@ -65,11 +64,17 @@ The cython commands may require you to add the C++ compiler from microsoft for P
 3. The software should install correctly. You may validate the installation by executing the following commands:
 ```python
 > python
->>> import lpfgopt
->>> lpfgopt.__version__
-'X.X.X'
+>>> from lpfgopt import __version__, unit_test
+>>> __version__
+'0.7.0'
+>>> unit_test.main()
+
+ [  3.00000  0.00000  0.00000 ]
+ [  3.00000  0.00000  0.00000 ]
+
+>>>
 ```
-If the version number appears below, congratulations! You have sucessfully installed the Leap Frog Optimizer package on your Windows machine!
+If the version number appears below and the above code returns no errors, congratulations! You have sucessfully installed the Leap Frog Optimizer package on your Windows machine!
 
 #### From Source (Linux Mint 18, GCC, Python 2.7):
 1. Set permissions for `lpfgopt/lpfgopt/linux_setup.sh` and run it or run the follwing commands from your terminal in the `lpfgopt/lpfgopt/` path:
@@ -86,9 +91,9 @@ $ rm -rf build                              # Delete the rest of the build
 ```
 2. If you have root priviliges, set permissions for `lpfgopt/lpfgopt/install_so.sh` and run it or run the follwoing commands from your terminal in the `lpfgopt/lpfgopt/` path:
 ```bash
-$ mkdir ~/.lpfgopt                        # Make a .lpfgopt directory
-$ cp liblpfgopt.so ~/.lpfgopt             # Copy the shared object file into it
-$ echo $HOME"/.lpfgopt" > lpfgopt.conf    # Make a shared library configuration file
+$ mkdir ~/.lib                            # Make a .lpfgopt directory
+$ cp liblpfgopt.so ~/.lib                 # Copy the shared object file into it
+$ echo $HOME"/.lib" > lpfgopt.conf    # Make a shared library configuration file
 $ sudo cp lpfgopt.conf /etc/ld.so.conf.d  # Copy the .conf into the proper folder
 $ sudo ldconfig                           # reset the dynamic linker
 ```

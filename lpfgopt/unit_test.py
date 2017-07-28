@@ -14,18 +14,18 @@ _intvls = [
     [-10.0, 10.0],
     [-10.0, 10.0]]
     
-def _main():
+def main():
     sol = minimize(_f_test, _intvls)
     print "\n [",
     for i in sol:
-        print " %.9f" % i,
-    print "]\n"
+        print " %.5f" % i,
+    print "]"
     
     sol = min1(_f_test, _intvls)
-    print "\n [",
+    print " [",
     for i in sol:
-        print " %.9f" % i,
+        print " %.5f" % i,
     print "]\n"
 
 if __name__ == "__main__":
-    _main()
+    main()

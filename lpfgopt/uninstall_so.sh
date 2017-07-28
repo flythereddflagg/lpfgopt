@@ -2,7 +2,6 @@
 
 set -e
 
-rm -rf $HOME/.lpfgopt
+rm -f $HOME/.lib/liblpfgopt.so
 sudo rm -f  /etc/ld.so.conf.d/lpfgopt.conf
 sudo ldconfig
-
