@@ -63,13 +63,11 @@ LPFGOPTAPI typedef struct two_dimensional_array{
     double** array;
 }array_2d;
 
-/* Declare our Add function using the above definitions. */
+/* Declare our functions using the above definitions. */
 LPFGOPTAPI double* LPFGOPTCALL minimize(double (*f1_ptr)(double*), array_2d* int_1,
               int npts, int nvars);
 LPFGOPTAPI void LPFGOPTCALL free_array_2d(array_2d* array);
 LPFGOPTAPI array_2d* LPFGOPTCALL zeros(int rows, int columns);
-
-
 
 #ifdef __cplusplus
 } // __cplusplus defined.
