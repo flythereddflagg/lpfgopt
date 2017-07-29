@@ -38,6 +38,12 @@ C/C++ on Windows and Linux.
 All source code has been tested with GCC and Python 2.7. Other compilers and
 Python 3 will have support in future versions.
 
+<b>System requirements for installation from source using these instructions:</b>
+ - Python 2.7 or higher
+ - cython
+ - numpy
+ - GCC (Linux or MinGW)
+
 #### From Source (Windows (7, 8, 10), MinGW, Python 2.7):
 1. Clone or download and extract the repository.
 2. If you can run Powershell scripts the `lpfgopt\lpfgopt\windows_setup.ps1` script 
@@ -106,9 +112,15 @@ $ python setup.py install     # You may need root priviliges or use the --user t
 3. The software should be installed correctly. You may validate the installation by executing the following commands:
 ```python
 $ python
->>> import lpfgopt
->>> lpfgopt.__version__
-'X.X.X'
+>>> from lpfgopt import __version__, unit_test
+>>> __version__
+'0.7.0'
+>>> unit_test.main()
+
+ [  3.00000  0.00000  0.00000 ]
+ [  3.00000  0.00000  0.00000 ]
+
+>>>
 ```
 If the version number appears below, congratulations! You have sucessfully installed the Leap Frog Optimizer package on your Linux machine!
 
