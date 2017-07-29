@@ -4,13 +4,9 @@
 # For information about this, see this tutorial:
 # https://python-packaging.readthedocs.org/en/latest/minimal.html
 
-try:
-    from setuptools import setup
-except ImportError    :
-    from distutils.core import setup
-
 from os import name as osname
 import lpfgopt
+
 
 if osname == "posix":
     file_include = {
@@ -33,6 +29,43 @@ else:
     raise OSError("This operating system is not supported under the current "\
         "version of lpfgopt.")
 
+
+try:
+    from setuptools import setup
+    
+    if osname == "posix":
+        from setuptools.command.install import install
+        import errno
+        import os
+        import subprocess
+        
+        class PostInstallCommand(install):
+            """Post-installation for installation mode."""
+            def run(self):
+                path1 = os.path.dirname(os.path.abspath( __file__ ))
+                
+                try:
+                    os.mkdir("/etc/foo")
+                    os.rmdir("/etc/foo")
+                    script_path = path1 + "/lpfgopt/install_so.sh"
+                        
+                except OSError as e:
+                    if (e[0] == errno.EPERM):
+                         script_path = path1 + "/lpfgopt/install_so_nroot.sh"
+                    else:
+                        raise OSError("Unknown Error Occurred")
+                subprocess.call(script_path)
+                install.run(self)
+
+except ImportError:
+    from distutils.core import setup
+    
+    if osname == "posix":
+        class PostInstallCommand():
+            def run(self):
+                pass
+
+
 def readme():
     with open('README.md') as f:
         return f.read()
@@ -50,6 +83,7 @@ config = {
     'scripts'             : [],
     'package_data'        : file_include,
     'long_description'    : readme(),
+    'cmdclass'            : {'install': PostInstallCommand},
     'include_package_data': True
     }
 
