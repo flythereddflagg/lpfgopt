@@ -35,25 +35,14 @@ try:
     
     if osname == "posix":
         from setuptools.command.install import install
-        import errno
-        import os
+        from os import path
         import subprocess
         
         class PostInstallCommand(install):
             """Post-installation for installation mode."""
             def run(self):
-                path1 = os.path.dirname(os.path.abspath( __file__ ))
-                
-                try:
-                    os.mkdir("/etc/foo")
-                    os.rmdir("/etc/foo")
-                    script_path = path1 + "/lpfgopt/install_so.sh"
-                        
-                except OSError as e:
-                    if (e[0] == errno.EPERM):
-                         script_path = path1 + "/lpfgopt/install_so_nroot.sh"
-                    else:
-                        raise OSError("Unknown Error Occurred")
+                path1 = path.dirname(path.abspath( __file__ ))
+                script_path = path1 + "/lpfgopt/so_install.sh"
                 subprocess.call(script_path)
                 install.run(self)
 

@@ -95,15 +95,11 @@ $ python "./cython/csetup.py" clean         # Clean up build files
 $ python "./cython/cysetup.py" clean
 $ rm -rf build                              # Delete the rest of the build
 ```
-2. If you have root priviliges, set permissions for `lpfgopt/lpfgopt/install_so.sh` and run it or run the follwoing commands from your terminal in the `lpfgopt/lpfgopt/` path:
-```bash
-$ mkdir ~/.lib                            # Make a .lpfgopt directory
-$ cp liblpfgopt.so ~/.lib                 # Copy the shared object file into it
-$ echo $HOME"/.lib" > lpfgopt.conf    # Make a shared library configuration file
-$ sudo cp lpfgopt.conf /etc/ld.so.conf.d  # Copy the .conf into the proper folder
-$ sudo ldconfig                           # reset the dynamic linker
-```
-If you do not have sudo privileges you may be able to work around the install by using the `lpfgopt/lpfgopt/install_so_nroot.sh` script in the same way as above.
+2. Run the shell script `lpfgopt/lpfgopt/install_so.sh` 
+# PROBLEM HERE
+## Root installs in the wrong directory
+with root privilges to correctly install the needed libraries. If you do not have root privilges then the script may be run without root privilges and will still work by doing an automatic workaround.
+
 3. Return to the main directory where "setup.py" is located and run the following command"
 ```bash
 $ cd ..
