@@ -6,3 +6,5 @@ include lpfgopt/*.pyd
 include lpfgopt/*.so
 include lpfgopt/*.dylib
 include lpfgopt/*.exe
+include lpfgopt/so_install.sh
+include lpfgopt/so_uninstall.sh

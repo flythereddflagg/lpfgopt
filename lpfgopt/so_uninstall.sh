@@ -2,9 +2,7 @@
 
 set -e
 
-echo ""
 echo "Uninstalling lpfgopt shared object libraries..."
-echo ""
 
 if [ -e /etc/ld.so.conf.d/lpfgopt.conf ] && [ $EUID -eq 0 ]; then
     

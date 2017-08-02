@@ -33,7 +33,6 @@ python-dll: src/$(DLL).c include/$(DLL).h
 python-so: src/$(SO).c include/$(SO).h
 	$(CC) $(CFLAGS) -c -o obj/$(SO).o -fPIC src/$(SO).c -D $(PY_OPT) -I./include
 	$(CC) -o lib$(SO).so obj/$(SO).o -s -shared
-	export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 
 dll: src/$(DLL).c include/$(DLL).h
 	$(WIN_DETAILS) -i res/$(DETAILS).rc -o obj/$(DETAILS).o
@@ -43,7 +42,6 @@ dll: src/$(DLL).c include/$(DLL).h
 so: src/$(SO).c include/$(SO).h
 	$(CC) $(CFLAGS) -c -o obj/$(SO).o -fPIC src/$(SO).c -I./include
 	$(CC) -o lib$(SO).so obj/$(SO).o -s -shared
-	export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 
 exe-win: src/$(DLL).c include/$(DLL).h $(DLL).dll
 	$(CC) -c -o obj/$(PROG).o src/$(PROG).c -I.\include 

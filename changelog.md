@@ -3,7 +3,10 @@
  - Update README.md with installation instructions
 
 ## to be added:
-
+ - implimentation in python 3 - Ongoing
+ - integer optimizer
+ - integer optimizer in C
+ - module tests
 
 # changes to version 0.6.2:
  - detailed documentation in source script
@@ -14,8 +17,3 @@
  - implimentation and integration with C
  - MIT Licence
 
-## to be added:
- - implimentation in python 3 - Ongoing
- - integer optimizer
- - integer optimizer in C
- - module tests

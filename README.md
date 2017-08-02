@@ -1,9 +1,9 @@
 # Leap Frog Optimizer Package
 
-version        : 0.7.0 - ALPHA <br/>
-last modified  : 26 July 2017 <br/>
-author         : Mark Redd <br/>
-email          : redddogjr@gmail.com <br/>
+<b> author         : Mark Redd </b><br/>
+<b> email          : redddogjr@gmail.com </b>
+* auto-gen TOC:
+{:toc}
 
 #### optimizer algorithm website: http://www.r3eda.com/
 
@@ -95,10 +95,6 @@ $ python "./cython/csetup.py" clean         # Clean up build files
 $ python "./cython/cysetup.py" clean
 $ rm -rf build                              # Delete the rest of the build
 ```
-2. Run the shell script `lpfgopt/lpfgopt/install_so.sh` 
-# PROBLEM HERE
-## Root installs in the wrong directory
-with root privilges to correctly install the needed libraries. If you do not have root privilges then the script may be run without root privilges and will still work by doing an automatic workaround.
 
 3. Return to the main directory where "setup.py" is located and run the following command"
 ```bash
@@ -138,4 +134,7 @@ http://stackoverflow.com/questions/3532589/how-to-build-a-dylib-from-several-o-i
 `g++ -dynamiclib -undefined suppress -flat_namespace *.o -o something.dylib`
 
 ## Usage
+[Nothing here yet]
+
+## Removal
 [Nothing here yet]
