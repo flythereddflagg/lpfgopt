@@ -6,8 +6,13 @@ from ctypes import *
 from os import name as osname
 
 if osname == 'posix': 
-    # need to find a way to copy lib to /lib in linux
-    libname = 'liblpfgopt.so'
+    # need to find a way to copy liblpfgopt.so to /lib in linux
+    # this will be handled in the setup.py script
+    #libname = 'liblpfgopt.so'
+    import lpfgopt
+    path_list = lpfgopt.__file__.split('/')
+    path_list[-1] = 'liblpfgopt.so'
+    libname = '/'.join(path_list)
 elif osname == 'nt':
     try: # this may cause problems for windows users
         import lpfgopt

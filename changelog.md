@@ -1,6 +1,7 @@
-# changes to version 0.7.0:
+# changes to version 0.7.2:
  - Reorganize code to appropriate folders
  - Update README.md with installation instructions
+ - Changing where the shared libs are installed
 
 ## to be added:
  - implimentation in python 3 - Ongoing
