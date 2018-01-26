@@ -12,7 +12,7 @@ This package is based the
 <em><a href="http://www.r3eda.com/leapfrogging-optimization-algorithm/">Leapfrogging Optimization 
 Algorithm</a></em>
 published by 
-<a href="http://www.r3eda.com/about/">Dr. R. Russell Rhinehart</a>.
+<a href="http://www.r3eda.com/about-russ/">Dr. R. Russell Rhinehart</a>.
 
 The following publications explain the technique and may be found on the website:
 
