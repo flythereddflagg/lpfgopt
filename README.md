@@ -39,7 +39,7 @@ You can install the lite versions via pip or using the setup.py in the down load
 
 #### Via pip
 
-Lpfgopt may be installed and tested on Linux or Windows x86_64 systems with pip using the following commands:
+Lpfgopt may be installed and tested with pip using the following commands:
 ```bash
 $ pip install lpfgopt
 $ python
@@ -61,10 +61,9 @@ If the `unit_test.main()` command produces the above output congratulations! You
 #### Via setup.py
 Open the main directory where "setup.py" is located and run the following command"
 ```bash
-$ cd ..
 $ python setup.py install     # You may need root priviliges or use the --user tag
 ```
-3. The software should be installed correctly. You may validate the installation by executing the following commands:
+The software should be installed correctly. You may validate the installation by executing the following commands:
 ```bash
 $ python
 ```
