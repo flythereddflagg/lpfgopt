@@ -1,4 +1,4 @@
-# changes to version 0.7.2:
+# changes to lite version 0.7.2:
  - Reorganize code to appropriate folders
  - Update README.md with installation instructions
  - Changing where the shared libs are installed
