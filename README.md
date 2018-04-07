@@ -1,4 +1,4 @@
-# Leap Frog Optimizer Package
+# Leap Frog Optimizer Package - Lite Edition
 
 <b> 
 Author  : Mark Redd  <br/>
@@ -28,14 +28,12 @@ The following publications explain the technique and may be found on the website
     “Convergence Criterion in Optimilsation of Stochastic Processes”,
     Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
 
-This code is intended for use in Python and C/C++ and has implimentaions in those languages. The Python
-implimentation is compiled with Cython and linked with a shared C library to maximize speed of optimization.
+This is the stripped down version of the package with minimal tools. It is written in pure Python to allow compatiblitiy
+for the alpha versions until the full version can be released.
 
-## Installation
-There are a variety of ways to install the software both for use in Python or 
-C/C++ on Windows and Linux. Support for Macintosh will be implimented in future versions. All source 
-code has been tested with GCC and Python 2.7. Other compilers and Python 3 will have support in future
-versions.
+## Installation 
+
+You can install the lite versions via pip or using the setup.py in the down load. Instructions are shown below.
 
 ### Python Installation:
 
