@@ -34,6 +34,10 @@ for the alpha versions until the full version can be released.
 ## Installation 
 
 You can install the lite versions via pip or using the setup.py in the down load. Instructions are shown below.
+**System requirements for installation from source using these instructions:**
+ - Python 2.7
+ - Numpy
+ - Nose
 
 ### Python Installation:
 
@@ -41,7 +45,7 @@ You can install the lite versions via pip or using the setup.py in the down load
 
 Lpfgopt may be installed and tested with pip using the following commands:
 ```bash
-$ pip install lpfgopt
+$ pip install lpfgopt-lite # You may need root privileges or the --user tag
 $ python
 ```
 ```python
@@ -54,12 +58,10 @@ $ python
 ```
 If the `unit_test.main()` command produces the above output congratulations! You have successfully installed the package!
 
-
-<b>System requirements for installation from source using these instructions:</b>
- - Python 2.7
-
 #### Via setup.py
-Open the main directory where "setup.py" is located and run the following command"
+Download and unzip the archive or clone it with git.
+
+Open the main directory where "setup.py" is located and run the following command:
 ```bash
 $ python setup.py install     # You may need root priviliges or use the --user tag
 ```
