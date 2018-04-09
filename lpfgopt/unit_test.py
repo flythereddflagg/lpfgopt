@@ -5,7 +5,7 @@
 This script will do a unit test on all modules before distribution.
 """
 
-from opt  import minimize
+from opt import minimize
 
 def _f_test(x): return 2.0 * x[0]**2 + x[1]**2 + 3.0
 
