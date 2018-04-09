@@ -59,7 +59,7 @@ $ python
 If the `unit_test.main()` command produces the above output congratulations! You have successfully installed the package!
 
 #### Via setup.py
-Download and unzip the archive or clone it with git.
+Download the 'lite' branch and unzip the archive or clone it with git.
 
 Open the main directory where "setup.py" is located and run the following command:
 ```bash
