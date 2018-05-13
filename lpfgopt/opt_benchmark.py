@@ -37,12 +37,10 @@ about:
         Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
 
 How to use the optimizer:
-    Needed from user: Intervals for all variables, the function that needs to be
-    minimized, other constraints
 """
 
 from warnings import warn
-from numpy.random import uniform
+from numpy.random import uniform, seed as npseed
 from numpy import prod, abs as npabs, sum as npsum, argsort, zeros, array
 
 class Solution():
@@ -54,22 +52,32 @@ class Solution():
         self.args = args
         self.points = points
         self.constraints = constraints
+        self.start_pts = start_pts
         self.tol = tol
         self.rel = rel
         self.f_evals = 0
         self.maxit = maxit
         self.err = tol + 1000
+        self.seed = seed
+        npseed(self.seed) # Seed the system if given
         
-        self.gen_pt_set() # generate the point set
-        self.bi, self.wi = self.eval_bw()  # Get the indices of the best and worst points
+        ### INITIALIZE ITERAVETIVE PROCESS ###
+        # generate the point set
+        self.pt_set = self.gen_pt_set() if start_pts is None else\
+            self.eval_pts() 
+        # Get the indices of the best and worst points
+        self.bi, self.wi = self.eval_bw()  
         self.best = self.pt_set[self.bi]
         self.worst = self.pt_set[self.wi]
+        
+            
     
     def minimize(self):
         for iters in range(self.maxit):
             self.get_new_w() # leap frog over the best to get a new point
             self.pt_set[self.wi] = self.worst # replace worst with new point
-            self.bi, self.wi = self.eval_bw()  # Get the indices of the best and worst points
+            # Get the indices of the best and worst points
+            self.bi, self.wi = self.eval_bw()  
             self.best = self.pt_set[self.bi] # set best
             self.worst = self.pt_set[self.wi] # set worst
             self.err = self.err_calc() # Get the overall error
@@ -125,13 +133,30 @@ class Solution():
         index1 = argsort(self.pt_set[:,0])
         return index1[0], index1[-1]
 
-
+    
+    def eval_pts(self):
+        """
+        Evaluates the start points given in the object.
+        """
+        if len(self.intervals) != len(self.start_pts[0]):
+            raise ValueError("Start point-inverval mismatch")
+        number_of_rows = len(self.start_pts)
+        number_of_cols = len(self.intervals) + 1
+        pt_set = zeros([number_of_rows, number_of_cols])
+        for n in range(self.points):           # for each point make a vector
+            for v in range(1,number_of_cols):  # for each variable
+                pt_set[n][v] = self.start_pts[n][v-1]
+            # get objective value
+            pt_set[n][0] = self.f(pt_set[n][1:], *self.args)
+            self.f_evals += 1
+        return pt_set
+    
     def gen_pt_set(self):
         """
         __PRIVATE FUNCTION__
         Generates a point set with "points" rows and "len(intervals)+1" columns
-        This matrix will be the initial point set that will be used in the Leapfrog
-        Algorithm. 
+        This matrix will be the initial point set that will be used in the 
+        Leapfrog Algorithm. 
         Args:
             f           - The objective function to be optimized
             intervals   - A 2d array with n rows and 2 columns with n being the 
@@ -146,14 +171,16 @@ class Solution():
             [f(x), x[0], x[1], x[2],...x[n-1]]
         """
         number_of_cols = len(self.intervals) + 1
-        self.pt_set = zeros([self.points, number_of_cols])
-        for n in range(self.points):                # for each point make a vector
+        pt_set = zeros([self.points, number_of_cols])
+        for n in range(self.points):           # for each point make a vector
             for v in range(1,number_of_cols):  # for each variable
-                                                
-                self.pt_set[n][v] = uniform(   # get a random input in the interval
+                pt_set[n][v] = uniform( # get random input in the interval
                     self.intervals[v-1][0], 
                     self.intervals[v-1][1])
-                self.pt_set[n][0] = self.f(self.pt_set[n][1:], *self.args) # get objective value
+            # get objective value
+            pt_set[n][0] = self.f(pt_set[n][1:], *self.args)
+            self.f_evals += 1
+        return pt_set
 
 
     def get_new_w(self):
@@ -179,6 +206,7 @@ class Solution():
             self.worst[i+1] = uniform(new_interval[0], new_interval[1]) ## get a new input
             inputs[i] = self.worst[i+1]
         self.worst[0] = self.f(inputs, *self.args) ## get a new objective value from the new inputs
+        self.f_evals += 1
 
 
 def minimize(f,intervals,args=(),full_output=False, points=20,
@@ -244,7 +272,7 @@ def minimize(f,intervals,args=(),full_output=False, points=20,
             rel, 
             maxit)
     solution.minimize()
-    return solution.best
+    return solution
 
 
 
@@ -258,14 +286,9 @@ def _main():
     int1 = [
         [-10.0,10.0],
         [-10.0,10.0]]
-    x = minimize(test, int1)
-    print('\nbest:', x, '\n')
+    solution_test = minimize(test, int1).best
+    print('\nbest:', solution_test, '\n')
 
-"""
-real    0m1.127s
-user    0m1.056s
-sys     0m0.022s
-"""
 
 if __name__ == "__main__":
     _main()

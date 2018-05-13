@@ -9,7 +9,7 @@ last modified  : 11 April 2017
 author         : Mark Redd
 email          : redddogjr@gmail.com
 
-written for python version: 3
+written for python version: 2
 
 optimizer algorithm website: http://www.r3eda.com/
 
@@ -113,8 +113,8 @@ def _gen_pt_set(f, intervals, points=20, constraints=None, args=()):
     """
     number_of_cols = len(intervals) + 1
     pt_set = zeros([points, number_of_cols])
-    for n in range(points):                # for each point make a vector
-        for v in range(1,number_of_cols):  # for each variable
+    for n in xrange(points):                # for each point make a vector
+        for v in xrange(1,number_of_cols):  # for each variable
                                             
             pt_set[n][v] = uniform(         # get a random input in the interval
                 intervals[v-1][0], 
@@ -133,7 +133,7 @@ def _get_new_w(f, b, w, intvl, args=()):
     """
     n_vars = len(w)-1           ## number of variables
     inputs = zeros(n_vars)   ## make an input array
-    for i in range(n_vars):
+    for i in xrange(n_vars):
         ## pick an interval for w that is opposite b
         new_interval = array([b[i+1] ,2*b[i+1] - w[i+1]])
         new_interval.sort() ## put the lower limit first
@@ -174,7 +174,7 @@ def minimize(f,intervals,args=(),full_output=False, points=20,
     """
     pt_set = _gen_pt_set(f,intervals,points, args=args) # generate the point set
 
-    for iters in range(maxit):
+    for iters in xrange(maxit):
 
         bi, wi = _eval_bw(pt_set)  # Get the indices of the best and worst points
         b = pt_set[bi]
@@ -261,10 +261,10 @@ def lfsolve(f,x0=None,intervals=None,args=(),full_output=False,
                                      # objective function
         spread = 0.0
         
-        for it1 in range(maxit):
+        for it1 in xrange(maxit):
             spread += s_step                # guess an interval centered on x0
             intervals = zeros([nvs,2])   # with bounds = x0 +- spread
-            for i in range(nvs):
+            for i in xrange(nvs):
                 intervals[i,0] = x0[i] - spread
                 intervals[i,1] = x0[i] + spread
             
@@ -323,7 +323,7 @@ def _main():
         [-10.0,10.0],
         [-10.0,10.0]]
     x = minimize(test, int1, full_output=True)
-    print(('\nbest:', x['best'], '\n'))
+    print('\nbest:', x['best'], '\n')
 """    
     x0 = [-3.0,3.0]
     x = lfsolve(solve_test2, x0, args=(3.0,), full_output=True)
