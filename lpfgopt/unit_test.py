@@ -5,6 +5,7 @@
 This script will do a unit test on all modules before distribution.
 """
 
+from __future__ import print_function
 import numpy as np
 from opt import minimize
 from opt_benchmark import minimize as min_bnch
@@ -65,7 +66,7 @@ def main():
     
     solution_test = min_bnch(_f_test, _intvls)
     print(
-        '\nopf best:', 
+        '\nopb best:', 
         solution_test.best, 
         '\nNumber of calls:', 
         solution_test.f_evals,
