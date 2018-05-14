@@ -10,42 +10,16 @@ try:
 except ImportError:
     from distutils.core import setup
 
-from os import name as osname
 import lpfgopt
 
 
-if osname == "posix":
-    file_include = {
-        'lpfgopt': [
-            'lpfgopt/copt.so',
-            'lpfgopt/cyopt.so',
-            'lpfgopt/liblpfgopt.so'
-            'lpfgopt/lpfgopt_test.exe'
-            ]
-        }
-
-elif osname == "nt":
-    file_include = {
-        'lpfgopt': [
-            'lpfgopt/lpfgopt.dll',
-            'lpfgopt/copt.pyd',
-            'lpfgopt/cyopt.pyd',
-            'lpfgopt/lpfgopt_test.exe'
-            ]
-        }
-
-else:
-    raise OSError("This operating system is not supported under the current "\
-        "version of lpfgopt.")
-
-
 def readme():
-    with open('README.md') as f:
+    with open('README.md', encoding='utf8') as f:
         return f.read()
 
 config = {
-    'name'                : 'lpfgopt',
-    'description'         : 'Leap Frog Optimizer',
+    'name'                : 'lpfgopt-lite',
+    'description'         : 'Leap Frog Optimizer - Lite Edition',
     'version'             : lpfgopt.__version__,
     'author'              : 'Mark E. Redd',
     'author_email'        : 'redddogjr@gmail.com',
@@ -54,7 +28,6 @@ config = {
     'install_requires'    : ['nose', 'numpy'],
     'packages'            : ['lpfgopt', 'tests'],
     'scripts'             : [],
-    'package_data'        : file_include,
     'long_description'    : readme(),
     'include_package_data': True
     }
