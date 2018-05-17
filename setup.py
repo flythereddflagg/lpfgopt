@@ -26,10 +26,12 @@ config = {
     'url'                 : 'http://www.r3eda.com/',
     'download_url'        : 'https://github.com/flythereddflagg/lpfgopt',
     'install_requires'    : ['nose', 'numpy'],
-    'packages'            : ['lpfgopt', 'tests'],
+    'packages'            : ['lpfgopt'],
     'scripts'             : [],
     'long_description'    : readme(),
-    'include_package_data': True
+    'include_package_data': True,
+    'license'             : 'MIT',
+    'classifiers'         : ['Development Status :: 3 - Alpha'],
     }
 
 setup(**config)
