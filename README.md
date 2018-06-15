@@ -33,8 +33,8 @@ for the alpha versions until the full version can be released.
 
 ## Installation 
 
-You can install the lite versions via pip or using the setup.py in the down load. Instructions are shown below.
-**System requirements for installation from source using these instructions:**
+You can install the lite versions via pip or using the setup.py script in the source code. Instructions are shown below.
+**System requirements for installation:**
  - Python 2.7 or 3.6
  - Numpy
  - Nose
@@ -118,6 +118,7 @@ Minimize `f` on the array of intervals for each decision variable.
     * `'final_error'`: final overall error
     * `'iterations'` : iterations to convergence or maxit if convergence was not reached
     * `'point_set'`  : the final state of the point set 
+
 #### Example Usage
 The following is a simple optimization where the minimum value of the following equation is found:  
  - f(x) = 2x^2 + y^2 + 3
