@@ -43,20 +43,11 @@ You can install the lite versions via pip or using the setup.py in the down load
 
 #### Via pip
 
-Lpfgopt may be installed and tested with pip using the following commands:
+Lpfgopt may be installed with pip using the following commands:
 ```bash
 $ pip install lpfgopt-lite # You may need root privileges or the --user tag
 $ python
 ```
-```python
->>> from lpfgopt import __version__, unit_test
->>> __version__
-'X.X.X'
->>> unit_test.main()
- [  3.00000  0.00000  0.00000 ]
->>>
-```
-If the `unit_test.main()` command produces the above output congratulations! You have successfully installed the package!
 
 #### Via setup.py
 Download the 'lite' branch and unzip the archive or clone it with git.
@@ -70,14 +61,25 @@ The software should be installed correctly. You may validate the installation by
 $ python
 ```
 ```python
->>> from lpfgopt import __version__, unit_test
->>> __version__
+>>> import lpfgopt
+>>> lpfgopt.__version__
 'X.X.X'
->>> unit_test.main()
- [  3.00000  0.00000  0.00000 ]
+>>> lpfgopt.unit_test()
+
+opt best: [  3.00000000e+00  -1.01889931e-07   2.48474385e-07]
+
+
+opb best: [  3.00000000e+00   5.42088925e-08  -3.95903947e-07]
+Number of calls: 406
+
+
+opf best: [  3.00000000e+00   1.97715430e-07   6.38317654e-08]
+Number of calls: 414
+
 >>>
 ```
-If the `unit_test.main()` command produces the above output congratulations! You have successfully installed the package!
+If the `lpfgopt.unit_test()` command produces the above output congratulations! You have successfully installed the package!
+
 ## Usage
 The minimize function is the focus of the package. More tools will be added as the package evolves. The documentation for 
 the function is given below with an example usage.
