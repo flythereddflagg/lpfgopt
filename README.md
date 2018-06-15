@@ -1,10 +1,10 @@
 # Leap Frog Optimizer Package - Lite Edition
 
 <b> 
-Author  : Mark Redd  
-Email   : redddogjr@gmail.com  
-GitHub  : https://github.com/flythereddflagg  
-Website : http://www.r3eda.com/  
+Author  : Mark Redd\
+Email   : redddogjr@gmail.com\  
+GitHub  : https://github.com/flythereddflagg\  
+Website : http://www.r3eda.com/\
 
 ### About:
 
