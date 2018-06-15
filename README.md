@@ -1,10 +1,10 @@
 # Leap Frog Optimizer Package - Lite Edition
 
 <b> 
-Author  : Mark Redd  <br/>
-Email   : redddogjr@gmail.com <br/>
-GitHub  : https://github.com/flythereddflagg <br/>
-Website : http://www.r3eda.com/ </b>
+Author  : Mark Redd  
+Email   : redddogjr@gmail.com  
+GitHub  : https://github.com/flythereddflagg  
+Website : http://www.r3eda.com/  
 
 ### About:
 
@@ -35,7 +35,7 @@ for the alpha versions until the full version can be released.
 
 You can install the lite versions via pip or using the setup.py in the down load. Instructions are shown below.
 **System requirements for installation from source using these instructions:**
- - Python 2.7
+ - Python 2.7 or 3.6
  - Numpy
  - Nose
 
@@ -46,7 +46,6 @@ You can install the lite versions via pip or using the setup.py in the down load
 Lpfgopt may be installed with pip using the following commands:
 ```bash
 $ pip install lpfgopt-lite # You may need root privileges or the --user tag
-$ python
 ```
 
 #### Via setup.py
@@ -149,33 +148,32 @@ print 'Final Point set\n', solution['point_set']
 ```
 This code will produce the following output:
 ```bash
--bash-4.2$ python test_lpfgopt.py
-Best Solution [  3.00000000e+00   2.56993473e-07  -2.09491337e-07]
-Best [  3.00000000e+00  -6.28972674e-09  -2.28753688e-08]
-Worst [  3.00000000e+00  -1.38087155e-07  -2.10084055e-06]
-Final Error 9.96442673929e-06
-Number of iterations 379
+Best Solution [  3.00000000e+00   1.37749213e-07   1.87748157e-08]
+Best [  3.00000000e+00   5.28168200e-08  -3.45605614e-07]
+Worst [  3.00000000e+00   4.06218529e-07   1.51397317e-07]
+Final Error 9.85836684782e-06
+Number of iterations 354
 Final Point set
-[[  3.00000000e+00   1.07083751e-07  -2.18870273e-07]
- [  3.00000000e+00   8.32314986e-07  -9.15522240e-07]
- [  3.00000000e+00   7.68957441e-07  -1.04105345e-06]
- [  3.00000000e+00  -4.72479226e-08   1.46408912e-06]
- [  3.00000000e+00   2.94841878e-07   3.94383641e-07]
- [  3.00000000e+00  -6.83697356e-07   1.06155755e-06]
- [  3.00000000e+00  -1.12944536e-06  -7.25128708e-08]
- [  3.00000000e+00  -4.49149018e-07  -7.33239651e-07]
- [  3.00000000e+00  -1.38087155e-07  -2.10084055e-06]
- [  3.00000000e+00   9.89936169e-08   2.13795158e-06]
- [  3.00000000e+00   2.98571550e-08  -9.54511199e-07]
- [  3.00000000e+00   8.59864265e-08  -9.29392680e-07]
- [  3.00000000e+00  -1.52397020e-06  -4.13280929e-08]
- [  3.00000000e+00   8.48590492e-07  -1.65243606e-06]
- [  3.00000000e+00  -1.43216345e-06  -1.41436678e-07]
- [  3.00000000e+00  -9.22183727e-07   1.49457448e-06]
- [  3.00000000e+00  -5.44663193e-07   2.58861735e-07]
- [  3.00000000e+00  -6.44378664e-07  -1.57923094e-06]
- [  3.00000000e+00   1.89972734e-07  -2.09631575e-06]
- [  3.00000000e+00  -6.28972674e-09  -2.28753688e-08]]
+[[  3.00000000e+00   1.57868094e-06   7.66937258e-07]
+ [  3.00000000e+00   4.06218529e-07   1.51397317e-07]
+ [  3.00000000e+00   5.28168200e-08  -3.45605614e-07]
+ [  3.00000000e+00  -3.97630722e-07  -7.12064238e-07]
+ [  3.00000000e+00  -2.04532346e-08  -1.28154364e-06]
+ [  3.00000000e+00  -1.63480318e-06  -6.72669205e-07]
+ [  3.00000000e+00   9.72430342e-07  -6.68945778e-07]
+ [  3.00000000e+00   1.04107370e-06  -7.66470995e-07]
+ [  3.00000000e+00   1.89352591e-06  -9.51089092e-07]
+ [  3.00000000e+00   1.02503206e-07   6.62107972e-07]
+ [  3.00000000e+00   7.44700974e-07  -2.24116728e-07]
+ [  3.00000000e+00   3.60869437e-07  -6.66090227e-07]
+ [  3.00000000e+00  -7.83721935e-07  -6.67303139e-07]
+ [  3.00000000e+00  -1.41274123e-06  -1.11464592e-06]
+ [  3.00000000e+00   1.42466667e-06  -1.03165734e-06]
+ [  3.00000000e+00   7.81033720e-07  -3.85818548e-07]
+ [  3.00000000e+00  -8.51362974e-07   6.78705726e-07]
+ [  3.00000000e+00   1.51469283e-06   1.56529366e-07]
+ [  3.00000000e+00   9.68223470e-07   1.25689063e-06]
+ [  3.00000000e+00   1.04756433e-08   1.63039424e-06]]
 ```
 ## Removal
 [Nothing here yet]
