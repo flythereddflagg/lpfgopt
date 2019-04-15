@@ -2,25 +2,27 @@
 # -*- coding: utf-8 -*-
 
 from random import seed, uniform
-from warnings import warn
 
 class LeapFrog():
     """
     Contains the data and methods necessary to run a LeapFrog optimization.
     Accepts constraints, discrete variables and allows for a variety of options.
     
-    The Genetic object constructor takes the following parameters:
-            - fun             : objective function
-            - bounds          : variable upper and lower bounds
-            - con             : constraint function
-            - discrete        : list of indices that correspond to 
-                                discrete variables. These variables
-                                will be constrained to integer values
-                                by truncating any randomly generated
-                                number (i.e. rounding down to the 
-                                nearest integer absolute value)
-            - pop_size        : point set size
-            - seed            : random seed
+    The LeapFrog object constructor takes the following parameters:
+        - fun         : objective function 
+        - bounds      : variable upper and lower bounds
+        - args        : other arguments to be passed into the function
+        - points      : point set size
+        - fconstraint : constraint function
+        - discrete    : list of indices that correspond to 
+                        discrete variables. These variables
+                        will be constrained to integer values
+                        by truncating any randomly generated
+                        number (i.e. rounding down to the 
+                        nearest integer absolute value)
+        - maxit       : maximum iterations
+        - tol         : convergence tolerance
+        - seedval     : random seed
     """
     def __init__(
                 self, 
@@ -31,7 +33,6 @@ class LeapFrog():
                 fconstraint=None,
                 discrete=[],
                 maxit=10000,
-                full_output=False, 
                 tol=1e-5,
                 seedval=None):
                 
@@ -42,10 +43,12 @@ class LeapFrog():
         self.fconstraint = fconstraint
         self.discrete    = discrete
         self.maxit       = maxit
-        self.full_output = full_output
         self.tol         = tol
         self.seed        = seedval
         self.nfev        = 0
+        self.maxcv       = 0
+        self.total_iters = 0
+        self.error       = None
         
         # seed the random number generator
         seed(self.seed)
@@ -68,7 +71,19 @@ class LeapFrog():
         # get the initial best and worst
         self.besti, self.worsti = self.get_best_worst()
     
-
+    
+    def __repr__(self):
+        return f"""
+Leap Frog Optimizer State:
+ best obj      : {self.pointset[self.besti][0]}
+ best point    : {self.pointset[self.besti][1:]}
+ fun evals     : {self.nfev}
+ iterations    : {self.total_iters}
+ maxcv         : {self.maxcv}
+ best          : {self.pointset[self.besti]}
+ worst         : {self.pointset[self.worsti]}
+ current error : {self.error}
+ """
     
     def f(self, x):
         self.nfev += 1
@@ -99,6 +114,8 @@ class LeapFrog():
             for i in range(self.points):
                 constraint_value = self.fconstraint(self.pointset[i][1:])
                 if constraint_value > 0:
+                    if constraint_value > self.maxcv:
+                        self.maxcv = constraint_value
                     self.pointset[i][0] = big + constraint_value
     
     
@@ -122,7 +139,7 @@ class LeapFrog():
         
 
     def leapfrog(self, besti, worsti):
-        
+
         new_point = [0.0 for i in range(self.n_columns)]
         
         for i in range(self.n_columns-1):
@@ -141,8 +158,16 @@ class LeapFrog():
             new_point[i] = uniform(*new_bound)
         
         new_point[1:] = self.enforce_discrete(new_point[1:])
-        new_point[0] = self.f(new_point[1:])
         
+        if self.fconstraint is not None:
+            constraint_value = self.fconstraint(new_point[1:])
+            if constraint_value > 0:
+                if constraint_value > self.maxcv:
+                        self.maxcv = constraint_value
+                for i in range(len(self.bounds)):
+                    new_point[i + 1] = uniform(*self.bounds[i])
+
+        new_point[0] = self.f(new_point[1:])
         return new_point
     
     
@@ -173,88 +198,127 @@ class LeapFrog():
         avg_dist = dist_sum / (self.n_columns + self.points - 1)
         
         return err_obj + avg_dist
-        
+    
+
+    def iterate(self):
+        self.besti, self.worsti = self.get_best_worst()
+        self.pointset[self.worsti] = self.leapfrog(self.besti, self.worsti)
+        self.enforce_constraints()
+        self.error = self.calculate_convergence()
+        self.total_iters += 1
+    
     
     def minimize(self):
         for iters in range(self.maxit):
-            self.besti, self.worsti = self.get_best_worst()
-            self.pointset[self.worsti] = self.leapfrog(self.besti, self.worsti)
-            self.enforce_constraints()
-            self.error = self.calculate_convergence()
+            self.iterate()
             
             if self.error < self.tol:
-                if self.full_output == True:
-                    return {
-                        "best"        : self.pointset[self.besti],
-                        "worst"       : self.pointset[self.worsti],
-                        "final_error" : self.error,
-                        "iterations"  : iters + 1,
-                        "pointset"    : self.pointset,
-                        "nfev"        : self.nfev,
-                        "message"     : "Tolerance condition satisfied"
-                        }
-                else:
-                    return self.pointset[self.besti]
+                return {
+                    "x"           : self.pointset[self.besti][1:],
+                    "success"     : True,
+                    "status"      : 0,
+                    "message"     : "Tolerance condition satisfied",
+                    "fun"         : self.pointset[self.besti][0],
+                    "jac"         : None,
+                    "hess"        : None,
+                    "hess_inv"    : None,
+                    "nfev"        : self.nfev,
+                    "njev"        : 0,
+                    "nhev"        : 0,
+                    "nit"         : self.total_iters + 1,
+                    "maxcv"       : self.maxcv,
+                    "best"        : self.pointset[self.besti],
+                    "worst"       : self.pointset[self.worsti],
+                    "final_error" : self.error,
+                    "pointset"    : self.pointset}
 
         
-        if self.full_output == True:
-            return {
-                "best"        : self.pointset[self.besti],
-                "worst"       : self.pointset[self.worsti],
-                "final_error" : self.error,
-                "iterations"  : iters + 1,
-                "pointset"    : self.pointset,
-                "nfev"        : self.nfev,
-                "message"     : "Maximum Iterations Exceeded"
-                }
-        else:
-            return self.pointset[self.besti]
+        return {
+            "x"           : self.pointset[self.besti][1:],
+            "success"     : False,
+            "status"      : 1,
+            "message"     : "Maximum Iterations Exceeded",
+            "fun"         : self.pointset[self.besti][0],
+            "jac"         : None,
+            "hess"        : None,
+            "hess_inv"    : None,
+            "nfev"        : self.nfev,
+            "njev"        : 0,
+            "nhev"        : 0,
+            "nit"         : self.total_iters + 1,
+            "maxcv"       : self.maxcv,
+            "best"        : self.pointset[self.besti],
+            "worst"       : self.pointset[self.worsti],
+            "final_error" : self.error,
+            "pointset"    : self.pointset}
 
-    
 
     
 def _main():
 
+    # optimize a simple, 2-parameter quadratic
     test = lambda x: x[0]**2.0 + x[1]**2.0 + 3.0
     
     int2 = [
         [-10.0,10.0],
         [-10.0,10.0]]
     
+    options = {
+        "fun"         : test, 
+        "bounds"      : int2,
+        "args"        : (),
+        "points"      : 3,
+        "fconstraint" : None,
+        "discrete"    : [],
+        "maxit"       : 5000,
+        "tol"         : 1e-3,
+        "seedval"     : 1235
+        }
     
-    lf = LeapFrog(test, int2, full_output=True, tol=1e-3, points=2)
-    x = lf.minimize() 
-    print()
-    for key in [
-            "best",      
-            "worst",      
-            "final_error",
-            "iterations",   
-            "nfev",       
-            "message"]:
-        print(f" {key:15} : {x[key]}")
-    print("\nPoint Set:")
-    for i in x['pointset']:
-        print(i)
-       
-       
-    g1 = lambda x: -2 * x[0] + 3
-    lf = LeapFrog(test, int2, full_output=True, tol=1e-3, points=20,
-                  fconstraint=g1, discrete=[0,1], maxit=10000)
-    x = lf.minimize() 
-    print()
-    for key in [
-            "best",      
-            "worst",      
-            "final_error",
-            "iterations",   
-            "nfev",       
-            "message"]:
-        print(f" {key:15} : {x[key]}")
-    print("\nPoint Set:")
-    for i in x['pointset']:
-        print(i)
-       
+    # Unconstrained optimization ----------------------------------------------
+    lf = LeapFrog(**options)
+    print("\nUNCONSTRAINED:\nBEFORE:")
+    print(lf)
+    x = lf.minimize()
+    print("AFTER:")
+    print(lf)
+    
 
+    # Constrained optimization ------------------------------------------------
+    g1 = lambda x: x[0] + 3
+    
+    options["fconstraint"] = g1
+    options["points"]      = 20
+    
+    
+    lf = LeapFrog(**options)
+    
+    print("\n\nCONSTRAINED:\nBEFORE:")
+    print(lf)        
+    x = lf.minimize() 
+    print("AFTER:")
+    print(lf)
+    
+    print("\nPoint Set:")
+    for i in x['pointset']:
+        print(i)
+        
+    # Constrained and discrete optimization -----------------------------------
+    options["discrete"]    = [0,1]
+    
+    lf = LeapFrog(**options)
+    
+    print("\n\nCONSTRAINED AND DISCRETE:\nBEFORE:")
+    print(lf)        
+    x = lf.minimize() 
+    print("AFTER:")
+    print(lf)
+    
+    print("\nPoint Set:")
+    for i in x['pointset']:
+        print(i)
+    print()
+
+    
 if __name__ == "__main__":
     _main()
