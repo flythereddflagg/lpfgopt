@@ -1,6 +1,118 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+
+"""
+filename       : leapfrog.py
+title          : Leap Frog Optimizer Class
+last modified  : 15 April 2019 
+author         : Mark Redd
+email          : redddogjr@gmail.com
+website        : http://www.r3eda.com/
+
+about:
+
+    This optimizer was written based on the algorithm published by
+    Dr. R. Russell Rhinehart.
+
+    A full explanation of the algorithm can be found at the following URL:
+
+    http://www.r3eda.com/leapfrogging-optimization-algorithm/
+
+    The following are "key references" published on
+    the optimization website explaining the technique:
+
+      - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar,
+        “Leapfrogging and Synoptic Leapfrogging: a new optimization approach”,
+        Computers & Chemical Engineering, Vol. 40, 11 May 2012, pp. 67-81.
+
+      - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart,
+        “Improved Initialization of Players in Leapfrogging Optimization”,
+        Computers & Chemical Engineering, Vol. 60, 2014, 426-429.
+
+      - Rhinehart, R. R.,
+        “Convergence Criterion in Optimilsation of Stochastic Processes”,
+        Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
+
+Example usage:
+>>> from leapfrog import LeapFrog
+>>>
+>>> # optimize a simple, 2-parameter quadratic
+... obj = lambda x: x[0]**2.0 + x[1]**2.0 + 3.0
+>>> g1  = lambda x: x[0] + 3
+>>>
+>>> int2 = [
+...     [-10.0,10.0],
+...     [-10.0,10.0]]
+>>>
+... # Constrained and discrete optimization ----
+... options = {
+...     "fun"         : obj,
+...     "bounds"      : int2,
+...     "args"        : (),
+...     "points"      : 20,
+...     "fconstraint" : g1,
+...     "discrete"    : [0,1],
+...     "maxit"       : 5000,
+...     "tol"         : 1e-3,
+...     "seedval"     : 1235
+...     }
+>>>
+>>> lf = LeapFrog(**options)
+>>>
+>>> print(lf) # BEFORE OPTIMIZATION
+
+Leap Frog Optimizer State:
+ best obj      : 12.0
+ best point    : [-3, 0]
+ fun evals     : 20
+ iterations    : 0
+ maxcv         : 11
+ best          : [12.0, -3, 0]
+ worst         : [144.0, 8, -1]
+ current error : None
+
+>>> x = lf.minimize()
+>>> print(lf) # AFTER OPTIMIZATION
+
+Leap Frog Optimizer State:
+ best obj      : 12.0
+ best point    : [-3, 0]
+ fun evals     : 344
+ iterations    : 324
+ maxcv         : 12.954605769310245
+ best          : [12.0, -3, 0]
+ worst         : [12.0, -3, 0]
+ current error : 0.0
+
+>>>
+>>> for i in x['pointset']:
+...     print(i)
+...
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+[12.0, -3, 0]
+>>>
+"""
+
+
 from random import seed, uniform
 
 class LeapFrog():
@@ -23,6 +135,7 @@ class LeapFrog():
         - maxit       : maximum iterations
         - tol         : convergence tolerance
         - seedval     : random seed
+        - pointset    : starting point set
     """
     def __init__(
                 self, 
@@ -34,7 +147,9 @@ class LeapFrog():
                 discrete=[],
                 maxit=10000,
                 tol=1e-5,
-                seedval=None):
+                seedval=None,
+                pointset=None,
+                **kwargs):
                 
         self.fun         = fun
         self.bounds      = bounds
@@ -49,19 +164,25 @@ class LeapFrog():
         self.maxcv       = 0
         self.total_iters = 0
         self.error       = None
+
         
         # seed the random number generator
         seed(self.seed)
         
         # build the point set
         self.n_columns = len(self.bounds) + 1
+        
         self.pointset = [
             [0.0 for i in range(self.n_columns)] for j in range(self.points)
             ]
         
         for row in range(points):
             for column in range(1, self.n_columns):
-                self.pointset[row][column] = uniform(*self.bounds[column-1])
+                if pointset is None:
+                    self.pointset[row][column] = uniform(*self.bounds[column-1])
+                else:
+                   self.pointset[row][column] = pointset[row][column-1] 
+            
             self.pointset[row][1:] = self.enforce_discrete(
                                                     self.pointset[row][1:])
             self.pointset[row][0] = self.f(self.pointset[row][1:])
@@ -219,12 +340,7 @@ Leap Frog Optimizer State:
                     "status"      : 0,
                     "message"     : "Tolerance condition satisfied",
                     "fun"         : self.pointset[self.besti][0],
-                    "jac"         : None,
-                    "hess"        : None,
-                    "hess_inv"    : None,
                     "nfev"        : self.nfev,
-                    "njev"        : 0,
-                    "nhev"        : 0,
                     "nit"         : self.total_iters + 1,
                     "maxcv"       : self.maxcv,
                     "best"        : self.pointset[self.besti],
@@ -239,12 +355,7 @@ Leap Frog Optimizer State:
             "status"      : 1,
             "message"     : "Maximum Iterations Exceeded",
             "fun"         : self.pointset[self.besti][0],
-            "jac"         : None,
-            "hess"        : None,
-            "hess_inv"    : None,
             "nfev"        : self.nfev,
-            "njev"        : 0,
-            "nhev"        : 0,
             "nit"         : self.total_iters + 1,
             "maxcv"       : self.maxcv,
             "best"        : self.pointset[self.besti],
