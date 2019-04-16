@@ -40,7 +40,7 @@ def rastrigin_test():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check)
+    run(f, bounds, check, output=True)
 
 
 def ackley_test():
@@ -48,7 +48,6 @@ def ackley_test():
     Ackley function benchmark
     """
     options = {
-        "points"      : 4,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         }
@@ -62,7 +61,7 @@ def ackley_test():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check)
+    run(f, bounds, check, options)
         
         
 
@@ -83,7 +82,7 @@ def sphere_test():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options, output=True)
+    run(f, bounds, check, options)
         
         
 def rosenbrock_test():
@@ -91,19 +90,18 @@ def rosenbrock_test():
     Rosenbrock function benchmark
     """
     options = {
-        "points"      : 20,
+        "points"      : 4,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         }
-    f = lambda x: sum([100*(x[i+1] - x[i])**2 + (1 - x[i])**2 \
-                    for i in range(len(x)-1)])
+    f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
     
     bounds = [
-        [-20.0, 20.0],
-        [-20.0, 20.0]]
+        [-3.0, 3.0],
+        [-3.0, 3.0]]
     
     check = [1.0, 1.0]
     
-    run(f, bounds, check)
+    run(f, bounds, check, options)
         
         
