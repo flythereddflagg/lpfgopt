@@ -48,7 +48,10 @@ def scipy_test():
     del options['args']
     del options['fun']
     
-    solution = opt_min(_f_test, [0], bounds=_intvls, 
+    def cb(x):
+        print(x)
+    
+    solution = opt_min(_f_test, [0], bounds=_intvls, callback=cb,
                         method=leapfrog_method, options=options)
    
     check = np.array([-3, 0])

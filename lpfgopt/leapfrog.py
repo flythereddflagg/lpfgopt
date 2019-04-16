@@ -37,7 +37,7 @@ about:
 Example usage:
 >>> from leapfrog import LeapFrog
 >>>
->>> # optimize a simple, 2-parameter quadratic
+>>> # optimize a simple, 2-parameter quadratic with a simple linear constraint
 ... obj = lambda x: x[0]**2.0 + x[1]**2.0 + 3.0
 >>> g1  = lambda x: x[0] + 3
 >>>
@@ -149,6 +149,7 @@ class LeapFrog():
                 tol=1e-5,
                 seedval=None,
                 pointset=None,
+                callback=None,
                 **kwargs):
                 
         self.fun         = fun
@@ -160,6 +161,7 @@ class LeapFrog():
         self.maxit       = maxit
         self.tol         = tol
         self.seed        = seedval
+        self.callback    = callback
         self.nfev        = 0
         self.maxcv       = 0
         self.total_iters = 0
@@ -322,11 +324,12 @@ Leap Frog Optimizer State:
     
 
     def iterate(self):
-        self.besti, self.worsti = self.get_best_worst()
         self.pointset[self.worsti] = self.leapfrog(self.besti, self.worsti)
         self.enforce_constraints()
+        self.besti, self.worsti = self.get_best_worst()
         self.error = self.calculate_convergence()
         self.total_iters += 1
+        
     
     
     def minimize(self):
@@ -341,13 +344,15 @@ Leap Frog Optimizer State:
                     "message"     : "Tolerance condition satisfied",
                     "fun"         : self.pointset[self.besti][0],
                     "nfev"        : self.nfev,
-                    "nit"         : self.total_iters + 1,
+                    "nit"         : self.total_iters,
                     "maxcv"       : self.maxcv,
                     "best"        : self.pointset[self.besti],
                     "worst"       : self.pointset[self.worsti],
                     "final_error" : self.error,
                     "pointset"    : self.pointset}
 
+            if self.callback is not None:
+                self.callback(self.pointset[self.besti][1:])
         
         return {
             "x"           : self.pointset[self.besti][1:],
@@ -356,7 +361,7 @@ Leap Frog Optimizer State:
             "message"     : "Maximum Iterations Exceeded",
             "fun"         : self.pointset[self.besti][0],
             "nfev"        : self.nfev,
-            "nit"         : self.total_iters + 1,
+            "nit"         : self.total_iters,
             "maxcv"       : self.maxcv,
             "best"        : self.pointset[self.besti],
             "worst"       : self.pointset[self.worsti],

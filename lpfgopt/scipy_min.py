@@ -16,14 +16,19 @@ def leapfrog_method(fun, x0, args, **kwargs):
     no meaning in this context so it is just filled with an arbitrary object.
     
     NOTES:
-        - tol and constraints are currently handled in the options dictionary
-            (see lpfgopt.leapfrog.LeapFrog for more details)
-        - callback is not yet implemented and will be ignored
+        - the 'constraints' variable is ignored for the leapfrog_method. To pass
+            in constraints, a constraint function may be passed in as 
+            the 'fconstraint' option having the form: fconstraint(x) <= 0. 
+            The function should return a value greater than 0 whenever any 
+            constraint is violated. The optimizer checks this function for every
+            new point and punishes objective when it is violated. 'fconstraint' 
+            is passed in the options dictionary (see lpfgopt.leapfrog.LeapFrog 
+            for more details)
     """
     kwargs["fun"]  = fun
     kwargs["x0"]   = x0
     kwargs["args"] = args
-        
+    
     lf = LeapFrog(**kwargs)
     solution = lf.minimize()
     
