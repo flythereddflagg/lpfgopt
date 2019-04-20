@@ -15,8 +15,7 @@ del os
 def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
              maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None):
     """
-    Basic wrapper function to interface with the LeapFrog optimizer class.
-    Best for general use.
+    General-use wrapper function to interface with the LeapFrog optimizer class.
     """
     options = {
         "fun"         : fun, 
