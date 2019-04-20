@@ -278,7 +278,7 @@ Leap Frog Optimizer State:
             if new_bound[1] > self.bounds[i][1]:
                 new_bound[1] = self.bounds[i][1]
             
-            new_point[i] = uniform(*new_bound)
+            new_point[i+1] = uniform(*new_bound)
         
         new_point[1:] = self.enforce_discrete(new_point[1:])
         
@@ -301,7 +301,7 @@ Leap Frog Optimizer State:
         obj_worst = self.pointset[self.worsti][0]
 
         if abs(obj_best) < self.tol:
-            norm1 = 1.0         
+            norm1 = self.tol        
         else:
             norm1 = obj_best
 
@@ -310,17 +310,17 @@ Leap Frog Optimizer State:
         dist_sum = 0
         for point in self.pointset:
             vars = point[1:]
+
             for i in range(self.n_columns-1):
                 if abs(point_best[i]) < self.tol:
-                    norm2 = 1.0
+                    norm1 = self.tol        
                 else:
-                    norm2 = point_best[i]
-                    
-                dist_sum += abs((point_best[i] - vars[i])/norm2)
+                    norm1 = point_best[i]
+                dist_sum += abs((point_best[i] - vars[i])/norm1)
         
-        avg_dist = dist_sum / (self.n_columns + self.points - 1)
+        avg_dist = dist_sum / (self.points + self.n_columns - 1)
         
-        return err_obj + avg_dist
+        return err_obj + dist_sum
     
 
     def iterate(self):

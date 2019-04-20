@@ -2,7 +2,7 @@ import numpy as np
 from lpfgopt import minimize
 
 
-def run(f, bounds, check, options={}, output=False):
+def run(f, bounds, check, options={}, output=False, tol=1e-1):
     sol = minimize(f, bounds, **options)
     
     for key, value in sol.items():
@@ -15,7 +15,12 @@ def run(f, bounds, check, options={}, output=False):
     assert sol['success'], "Optimization Failed"
     
     for i in range(len(check)):
-        assert check[i] == sol['x'][i], f"Failed on {i}"
+        if abs(check[i]) < tol:
+            norm = tol
+        else:
+            norm = check[i]
+        err = abs((check[i] - sol['x'][i])/norm)
+        assert err <= tol, f"Failed on parameter index {i}"
     
     if output:
         raise Exception("Generic Exception")
@@ -27,7 +32,7 @@ def rastrigin_test():
     Rastrigin function benchmark
     """
     options = {
-        "points"      : 4,
+        "points"      : 50,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         }
@@ -40,7 +45,7 @@ def rastrigin_test():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, output=True)
+    run(f, bounds, check, options)
 
 
 def ackley_test():
@@ -70,7 +75,6 @@ def sphere_test():
     Sphere function benchmark
     """
     options = {
-        "points"      : 3,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         }
@@ -90,7 +94,6 @@ def rosenbrock_test():
     Rosenbrock function benchmark
     """
     options = {
-        "points"      : 4,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         }
