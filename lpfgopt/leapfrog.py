@@ -1,11 +1,6 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-
 """
 filename       : leapfrog.py
 title          : Leap Frog Optimizer Class
-last modified  : 15 April 2019 
 author         : Mark Redd
 email          : redddogjr@gmail.com
 website        : http://www.r3eda.com/
@@ -243,6 +238,11 @@ Leap Frog Optimizer State:
     
     
     def enforce_discrete(self, args):
+        """
+        Returns a copy of @param args with the indices in the class
+        parameter 'self.discrete' made to be integer values by
+        truncating the float value.
+        """
         args = args.copy()
         for i in self.discrete:
             args[i] = int(args[i])
@@ -262,6 +262,12 @@ Leap Frog Optimizer State:
         
 
     def leapfrog(self, besti, worsti):
+        """
+        Core step in the leapfrogging algorithm. Takes a best and worst
+        index of the 'pointset' and generates a new point in place of 
+        the worst by "leapfrogging" over the point corresponding to the 
+        'best' index.       
+        """
 
         new_point = [0.0 for i in range(self.n_columns)]
         
@@ -295,6 +301,14 @@ Leap Frog Optimizer State:
     
     
     def calculate_convergence(self):
+        """
+        Calculates a convergence value by calculating the relative 
+        distance between the objective values of the best and 
+        worst points and average distance between each point and
+        the best point and summing the two values together. This
+        convergence value is taken as the error of the optimization
+        and once the error <= tolerance the optimization ends.
+        """
         obj_best = self.pointset[self.besti][0]
         point_best = self.pointset[self.besti][1:]
         
@@ -324,6 +338,10 @@ Leap Frog Optimizer State:
     
 
     def iterate(self):
+        """
+        Completes one iteration of a leapfrog optimization initialized 
+        in the class constructor.
+        """
         self.pointset[self.worsti] = self.leapfrog(self.besti, self.worsti)
         self.enforce_constraints()
         self.besti, self.worsti = self.get_best_worst()
@@ -333,6 +351,11 @@ Leap Frog Optimizer State:
     
     
     def minimize(self):
+        """
+        Minimizes a function until the convergence criteria are 
+        satisfied or the number of iterations exceeds 
+        'self.maxit'.
+        """
         for iters in range(self.maxit):
             self.iterate()
             
@@ -371,7 +394,9 @@ Leap Frog Optimizer State:
 
     
 def _main():
-
+    """
+    Run a simple test on the optimizer.
+    """
     # optimize a simple, 2-parameter quadratic
     test = lambda x: x[0]**2.0 + x[1]**2.0 + 3.0
     
