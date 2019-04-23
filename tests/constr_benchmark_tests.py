@@ -57,3 +57,34 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
     
     if output:
         raise Exception("Generic Exception")
+        
+        
+def rosenbrock_line_cubic_test():
+    """
+    Rosenbrock function constrained with a cubic and a line benchmark
+    """
+    def g(x):
+        conval = 0
+        cons = [
+            (x[0] - 1)**3 - x[1] + 1,
+            x[0] + x[1] - 2         ]
+        for con in cons:
+            if con > 0:
+                conval += con
+        return conval
+        
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g
+        }
+        
+    f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
+    
+    bounds = [
+        [-1.5, 1.5],
+        [-0.5, 2.5]]
+    
+    check = [1.0, 1.0]
+    
+    run(f, bounds, check, options)

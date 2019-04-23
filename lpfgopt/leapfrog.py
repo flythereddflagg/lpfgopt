@@ -268,7 +268,8 @@ Leap Frog Optimizer State:
         the worst by "leapfrogging" over the point corresponding to the 
         'best' index.       
         """
-
+        
+        punish = self.pointset[worsti][0]
         new_point = [0.0 for i in range(self.n_columns)]
         
         for i in range(self.n_columns-1):
@@ -287,16 +288,15 @@ Leap Frog Optimizer State:
             new_point[i+1] = uniform(*new_bound)
         
         new_point[1:] = self.enforce_discrete(new_point[1:])
+        new_point[0]  = self.f(new_point[1:])
         
         if self.fconstraint is not None:
             constraint_value = self.fconstraint(new_point[1:])
             if constraint_value > 0:
                 if constraint_value > self.maxcv:
                         self.maxcv = constraint_value
-                for i in range(len(self.bounds)):
-                    new_point[i + 1] = uniform(*self.bounds[i])
+                new_point[0] += constraint_value
 
-        new_point[0] = self.f(new_point[1:])
         return new_point
     
     
@@ -343,7 +343,7 @@ Leap Frog Optimizer State:
         in the class constructor.
         """
         self.pointset[self.worsti] = self.leapfrog(self.besti, self.worsti)
-        self.enforce_constraints()
+        #self.enforce_constraints()
         self.besti, self.worsti = self.get_best_worst()
         self.error = self.calculate_convergence()
         self.total_iters += 1
