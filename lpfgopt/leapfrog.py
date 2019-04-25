@@ -290,11 +290,13 @@ Leap Frog Optimizer State:
         new_point[1:] = self.enforce_discrete(new_point[1:])
         
         if self.fconstraint is not None:
+            print("Constraint violated!")
             constraint_value = self.fconstraint(new_point[1:])
             while constraint_value > 0:
                 for i in range(self.n_columns-1):
                     new_bound = sorted([ 
-                        self.pointset[self.besti][i+1], 
+                        self.pointset[
+                        self.besti][i+1], 
                         new_point[i+1]])
                     
                     new_point[i+1] = uniform(*new_bound)

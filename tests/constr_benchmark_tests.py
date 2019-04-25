@@ -74,6 +74,7 @@ def rosenbrock_line_cubic_test():
         return conval
         
     options = {
+        "points"      : 50,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         "fconstraint" : g
@@ -84,7 +85,9 @@ def rosenbrock_line_cubic_test():
     bounds = [
         [-1.5, 1.5],
         [-0.5, 2.5]]
-    
+#    bounds = [
+#         [-3.0, 3.0],
+#         [-3.0, 3.0]]
     check = [1.0, 1.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, tol=1.5e-3)
