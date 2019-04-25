@@ -49,7 +49,8 @@ def scipy_test():
     del options['fun']
     
     def cb(x):
-        print(x)
+        pass
+        #print(x)
     
     solution = opt_min(_f, [0], bounds=_intvls, callback=cb,
                         method=leapfrog_method, options=options)

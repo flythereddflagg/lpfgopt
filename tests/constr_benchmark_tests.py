@@ -57,7 +57,32 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
     
     if output:
         raise Exception("Generic Exception")
-        
+
+
+
+def sphere_constr_test():
+    """
+    Constrained sphere function benchmark
+    """
+    g = lambda x: -x[0]**2 + 10 - x[1] 
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g
+        }
+      
+    f = lambda x: sum([i**2 for i in x])
+    
+    bounds = [
+        [-20.0, 20.0],
+        [-20.0, 20.0]]
+    
+    check = [-np.pi, 0.1223]
+    
+    run(f, bounds, check, options)
+
+
+    
         
 def rosenbrock_line_cubic_test():
     """
@@ -71,10 +96,9 @@ def rosenbrock_line_cubic_test():
         for con in cons:
             if con > 0:
                 conval += con
-        return conval
+        return conval * 200
         
     options = {
-        "points"      : 50,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         "fconstraint" : g
@@ -83,11 +107,13 @@ def rosenbrock_line_cubic_test():
     f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
     
     bounds = [
-        [-1.5, 1.5],
+        [0.5, 1.5],
         [-0.5, 2.5]]
 #    bounds = [
 #         [-3.0, 3.0],
 #         [-3.0, 3.0]]
     check = [1.0, 1.0]
     
-    run(f, bounds, check, options, tol=1.5e-3)
+    run(f, bounds, check, options)
+
+
