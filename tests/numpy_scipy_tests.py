@@ -4,7 +4,7 @@ from lpfgopt import minimize
 from lpfgopt.scipy_min import leapfrog_method
 
 
-def _f_test(x):
+def _f(x):
     return 2.0 * x[0]**2 + x[1]**2 + 3.0
 
 _g1 = lambda x: x[0] + 3
@@ -14,7 +14,7 @@ _intvls = np.array([
     [-10.0, 10.0]])
 
 options = {
-    "fun"         : _f_test, 
+    "fun"         : _f, 
     "bounds"      : _intvls,
     "args"        : (),
     "points"      : 10,
@@ -51,7 +51,7 @@ def scipy_test():
     def cb(x):
         print(x)
     
-    solution = opt_min(_f_test, [0], bounds=_intvls, callback=cb,
+    solution = opt_min(_f, [0], bounds=_intvls, callback=cb,
                         method=leapfrog_method, options=options)
    
     check = np.array([-3, 0])
@@ -61,4 +61,4 @@ def scipy_test():
         assert solution.x[i] == check[i], f"numpy test failed on {i}"
     options['bounds'] = _intvls
     options['args'] = ()
-    options['fun'] = _f_test
+    options['fun'] = _f

@@ -269,7 +269,7 @@ Leap Frog Optimizer State:
         'best' index.       
         """
         
-        punish = self.pointset[worsti][0]
+        punish = abs(self.pointset[worsti][0])
         new_point = [0.0 for i in range(self.n_columns)]
         
         for i in range(self.n_columns-1):
@@ -288,14 +288,27 @@ Leap Frog Optimizer State:
             new_point[i+1] = uniform(*new_bound)
         
         new_point[1:] = self.enforce_discrete(new_point[1:])
-        new_point[0]  = self.f(new_point[1:])
         
         if self.fconstraint is not None:
             constraint_value = self.fconstraint(new_point[1:])
-            if constraint_value > 0:
-                if constraint_value > self.maxcv:
-                        self.maxcv = constraint_value
-                new_point[0] += constraint_value
+            while constraint_value > 0:
+                for i in range(self.n_columns-1):
+                    new_bound = sorted([ 
+                        self.pointset[self.besti][i+1], 
+                        new_point[i+1]])
+                    
+                    new_point[i+1] = uniform(*new_bound)
+                
+                constraint_value = self.fconstraint(new_point[1:])
+                        
+        new_point[0]  = self.f(new_point[1:])
+        
+        # if self.fconstraint is not None:
+            # constraint_value = self.fconstraint(new_point[1:])
+            # if constraint_value > 0:
+                # if constraint_value > self.maxcv:
+                        # self.maxcv = constraint_value
+                # new_point[0] += constraint_value + punish
 
         return new_point
     
@@ -321,10 +334,13 @@ Leap Frog Optimizer State:
 
         err_obj = abs((obj_worst - obj_best)/norm1) 
         
-        dist_sum = 0
+        dist_sum = 0.0
+        constraint_value = 0.0
         for point in self.pointset:
             vars = point[1:]
-
+            conval = 0.0 if self.fconstraint is None else self.fconstraint(vars)
+            if conval > 0.0:
+                constraint_value += conval
             for i in range(self.n_columns-1):
                 if abs(point_best[i]) < self.tol:
                     norm1 = self.tol        
@@ -334,7 +350,8 @@ Leap Frog Optimizer State:
         
         avg_dist = dist_sum / (self.points + self.n_columns - 1)
         
-        return err_obj + dist_sum
+        
+        return err_obj + dist_sum + conval
     
 
     def iterate(self):
