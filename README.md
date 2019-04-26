@@ -86,7 +86,7 @@ is a n X 2 list of lists or 2d numpy array with shape (n,2)
 The following is a simple optimization where the minimum value of the following equation is found:  
  - $f(x) = x^2+y^2$
  - Subject to: $g(x) = -x^2 - y + 10 \le 0$ **or** g(x) = -x^2 - y + 10 <= 0
- - Where **x, y &#8712; [-5,5]**
+ - Where **x, y &#8712; [-5, 5]**
 ```python
 # test_lpfgopt.py
 from lpfgopt import minimize
