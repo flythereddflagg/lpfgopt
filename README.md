@@ -132,48 +132,36 @@ is a n X 2 list of lists or 2d numpy array with shape (n,2)
          The solution vector or the vector of 
          decision variables that produced the lowest 
          objective function value
-       
        - **success : bool**
          Whether or not the optimizer exited successfully.
-       
        - **status : int**
          Termination status of the optimizer. Its value 
          depends on the underlying solver. Refer to 
          message for details.
-       
        - **message : string**
          Description of the cause of the termination.
-       
        - **fun: float**
          The objective function value at 'x'
-       
        - **nfev : int**
          The number of function evaluations of the objective
          function
-       
        - **nit : int**
          The number of iterations performed
-       
        - **maxcv : float**
          The maximum constraint violation evaluated during
          optimization
-       
        - **best : list** 
          The member of the population that had the lowest
          objective value in the point set having the form
          [f(x), x[0], x[1], ..., x[n-1]]
-     
-  - **worst : list**
+       - **worst : list**
          The member of the population that had the highest
          objective value in the point set having the form
          [f(x), x[0], x[1], ..., x[n-1]]
-     
        - **final_error : float**
          The optimization convergence value upon termination
-  
        - **pointset :  list, shape(m, n)** The entire point set state upon termination having 
          the form:
-       
          ```
           [
           [f(x[0]),   x[0][0],   x[0][1],   ..., x[0][n-1]],
@@ -182,10 +170,8 @@ is a n X 2 list of lists or 2d numpy array with shape (n,2)
           [f(x[m-1]), x[m-1][0], x[m-1][1], ..., x[m-1][n-1]]
           ]
          ```
-       
          where n is the number of decision variables and m 
           is the number of points in the search population.
-     
 
 #### Example Usage
 The following is a simple optimization where the minimum value of the following equation is found:  
