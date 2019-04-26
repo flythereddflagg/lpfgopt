@@ -57,3 +57,52 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
     
     if output:
         raise Exception("Generic Exception")
+        
+
+
+def rosenbrock_discrete_test():
+    """
+    Rosenbrock function constrained to a disk benchmark
+    """
+    # adjust limits to improve optimization for large domains
+    g = lambda x: x[0]**2 + x[1]**2 - 2
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g,
+        "discrete"    : [0,1]
+        }
+        
+    f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
+    
+    bounds = [
+        [-11.0, 11.0],
+        [-11.0, 11.0]]
+        
+    check = [1.0, 1.0]
+    
+    run(f, bounds, check, options)
+    
+    
+    
+def sphere_constr_test():
+    """
+    Constrained sphere function benchmark
+    """
+    g = lambda x: -x[0]**2 + 10 - x[1] 
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g,
+        "discrete"    : [0]
+        }
+      
+    f = lambda x: sum([i**2 for i in x])
+    
+    bounds = [
+        [-20.0, 20.0],
+        [-20.0, 20.0]]
+    
+    check = [-3, 1.0]
+    
+    run(f, bounds, check, options)

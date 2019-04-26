@@ -43,7 +43,7 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
         print(f"{key:12} : {value}")
 
     for i in sol['pointset']:
-        print(i)
+        print(i, options['fconstraint'](i[1:]))
 
     assert sol['success'], "Optimization Failed"
     
@@ -88,6 +88,7 @@ def rosenbrock_line_cubic_test():
     """
     Rosenbrock function constrained with a cubic and a line benchmark
     """
+    # CAVEAT: bounds are adjusted here (remedy?)
     def g(x):
         conval = 0
         cons = [
@@ -107,7 +108,7 @@ def rosenbrock_line_cubic_test():
     f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
     
     bounds = [
-        [0.5, 1.5],
+        [0.5, 1.5], 
         [-0.5, 2.5]]
 #    bounds = [
 #         [-3.0, 3.0],
@@ -117,3 +118,83 @@ def rosenbrock_line_cubic_test():
     run(f, bounds, check, options)
 
 
+
+def rosenbrock_disk_test():
+    """
+    Rosenbrock function constrained to a disk benchmark
+    """
+    g = lambda x: x[0]**2 + x[1]**2 - 2
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g
+        }
+        
+    f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
+    
+    bounds = [
+        [-1.5, 1.5],
+        [-1.5, 1.5]]
+        
+    check = [1.0, 1.0]
+    
+    run(f, bounds, check, options)
+    
+    
+
+def mishra_bird_constr_test():
+    """
+    Mishra's Bird function - constrained benchmark
+    """
+    def f(vs):
+        x, y = vs
+        a = np.sin(y) * np.exp((1 - np.cos(x))**2)
+        b = np.cos(x) * np.exp((1 - np.sin(y))**2)
+        c = (x - y)**2
+        return a + b + c
+    
+    def g(vs):
+        x, y = vs
+        return (x + 5)**2 + (y + 5)**2 - 24.9999999
+        
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g
+        }
+    
+    bounds = [
+        [-10.0, 0.0],
+        [ -6.5, 0.0]]
+        
+    check = [-3.1302468, -1.5821422]
+    
+    run(f, bounds, check, options)
+    
+   
+
+def simionescu_test():
+    """
+    Simionescu function benchmark
+    """
+    ### NOTE: LeapFrog seems to get stuck in local minimum. DEBUG?
+    f = lambda x: 0.1 * x[0] * x[1]
+    
+    def g(vs):
+        x, y = vs
+        rt, rs, n = 1.0, 0.2, 8.0
+        return x**2 + y**2 - (rt + rs * np.cos(n * np.arctan(x/y)))**2
+        
+    options = {
+        "tol"         : 1e-3,
+        "seedval"     : 4815162342,
+        "fconstraint" : g
+        }
+    
+    bounds = [
+        [-1.25, 0],
+        [0, 1.25]]
+        
+    check = [-0.84852813, 0.84852813]
+    
+    run(f, bounds, check, options, tol=1e-2)
