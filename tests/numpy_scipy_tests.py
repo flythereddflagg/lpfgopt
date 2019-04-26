@@ -59,7 +59,7 @@ def scipy_test():
     print(check, solution.x)
     assert len(check) == len(solution.x), "Solutions do not match form."
     for i in range(len(solution.x)):
-        assert solution.x[i] == check[i], f"numpy test failed on {i}"
+        assert solution.x[i] == check[i], f"scipy test failed on {i}"
     options['bounds'] = _intvls
     options['args'] = ()
     options['fun'] = _f

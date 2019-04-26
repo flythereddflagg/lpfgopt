@@ -131,6 +131,7 @@ class LeapFrog():
         - tol         : convergence tolerance
         - seedval     : random seed
         - pointset    : starting point set
+        - callback    : function to be called after each iteration
     """
     def __init__(
                 self, 
