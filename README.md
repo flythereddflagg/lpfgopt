@@ -14,15 +14,12 @@ published by
 <a href="http://www.r3eda.com/about-russ/">Dr. R. Russell Rhinehart</a>.
 
 The following publications explain the technique and may be found on the website:
-
   - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar,
     “Leapfrogging and Synoptic Leapfrogging: a new optimization approach”,
     Computers & Chemical Engineering, Vol. 40, 11 May 2012, pp. 67-81.
-
   - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart,
     “Improved Initialization of Players in Leapfrogging Optimization”,
     Computers & Chemical Engineering, Vol. 60, 2014, 426-429.
-
   - Rhinehart, R. R.,
     “Convergence Criterion in Optimilsation of Stochastic Processes”,
     Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
@@ -49,27 +46,18 @@ $ pip install lpfgopt-lite # You may need root privileges or the --user tag
 ```
 
 If you wish to install locally with pip you may do the following:
-
 - Download the 'lite' branch and unzip the archive or clone it with git.
-
 - Open the main directory where "setup.py" is located and run the following command:
-
   ```bash
   $ pip install .
   ```
-
 #### Via setup.py
-
 - Download the 'lite' branch and unzip the archive or clone it with git.
-
 - Open the main directory where "setup.py" is located and run the following command:
-
   ```bash
   $ python setup.py install     # You may need root priviliges or use the --user tag
   ```
-
 The software should be installed correctly. You may validate the installation by executing the following commands:
-
 ```python
 $ python
 >>> import lpfgopt
@@ -80,10 +68,8 @@ $ python
 >>>
 ```
 If the above commands produce the output congratulations! You have successfully installed the package!
-
 ## Usage
 Use the `lpfgopt.minimize` function to solve optimization problems of the form:
-
 ```
 minimize f(x)
 subject to:
@@ -96,7 +82,6 @@ subject to:
 where n is the number of decsision variables and bound
 is a n X 2 list of lists or 2d numpy array with shape (n,2)
 ```
-
 ### `lpfgopt.minimize` documentation
 
 **lpfgopt.minimize(** *fun, bounds, args=(), points=20, fconstraint=None, discrete=[], maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None* **)**
