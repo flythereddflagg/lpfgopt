@@ -82,6 +82,54 @@ subject to:
 where n is the number of decsision variables and bound
 is a n X 2 list of lists or 2d numpy array with shape (n,2)
 ```
+#### Example Usage
+The following is a simple optimization where the minimum value of the following equation is found:  
+ - $f(x) = x^2+y^2$
+ - Subject to: $g(x) = -x^2 - y + 10 \le 0$ **or** g(x) = -x^2 - y + 10 <= 0
+ - Where x, y &#8712; [-5,5]
+```python
+# test_lpfgopt.py
+from lpfgopt import minimize
+import matplotlib.pyplot as plt
+
+# set up the objective funciton, 
+# constraint fuction and bounds
+f = lambda x: sum([i**2 for i in x])
+g = lambda x: -x[0]**2 + 10 - x[1] 
+bounds = [[-5,5] for i in range(2)]
+
+# run the optimization
+sol = minimize(f, bounds, fconstraint=g)['x']
+print(f"Solution is: {sol}")
+
+# plot the results on a contour plot
+gg = lambda x: -x**2 + 10 # for plotting purposes
+
+plt.figure(figsize=(8,8))
+x, y = np.linspace(-5,5,1000), np.linspace(-5,5,1000)
+X, Y = np.meshgrid(x,y)
+Z = f([X,Y])
+
+plt.contourf(X,Y,Z)
+plt.plot(x, gg(x), "r", label="constraint")
+plt.plot(*sol, 'x', 
+         markersize=14, 
+         markeredgewidth=4, 
+         color="lime", 
+         label="optimum")
+plt.ylim(-5,5)
+plt.xlim(-5,5)
+plt.legend()
+plt.show()
+```
+This code will produce the following output:
+```bash
+Solution is: [-3.0958051486911997, 0.4159905027317925]
+```
+As well as a plot that should look similar to the following image:
+
+![](./docs/media/sample_opt.png)
+
 ### `lpfgopt.minimize` documentation
 
 **lpfgopt.minimize(** *fun, bounds, args=(), points=20, fconstraint=None, discrete=[], maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None* **)**
@@ -158,49 +206,3 @@ is a n X 2 list of lists or 2d numpy array with shape (n,2)
          where n is the number of decision variables and m 
           is the number of points in the search population.
 
-#### Example Usage
-The following is a simple optimization where the minimum value of the following equation is found:  
- - $f(x) = x^2+y^2$
- - Subject to: $g(x) = -x^2 - y + 10 \le 0$ **or** g(x) = -x^2 - y + 10 <= 0
-```python
-# test_lpfgopt.py
-from lpfgopt import minimize
-import matplotlib.pyplot as plt
-
-# set up the objective funciton, 
-# constraint fuction and bounds
-f = lambda x: sum([i**2 for i in x])
-g = lambda x: -x[0]**2 + 10 - x[1] 
-bounds = [[-5,5] for i in range(2)]
-
-# run the optimization
-sol = minimize(f, bounds, fconstraint=g)['x']
-print(f"Solution is: {sol}")
-
-# plot the results on a contour plot
-gg = lambda x: -x**2 + 10 # for plotting purposes
-
-plt.figure(figsize=(8,8))
-x, y = np.linspace(-5,5,1000), np.linspace(-5,5,1000)
-X, Y = np.meshgrid(x,y)
-Z = f([X,Y])
-
-plt.contourf(X,Y,Z)
-plt.plot(x, gg(x), "r", label="constraint")
-plt.plot(*sol, 'x', 
-         markersize=14, 
-         markeredgewidth=4, 
-         color="lime", 
-         label="optimum")
-plt.ylim(-5,5)
-plt.xlim(-5,5)
-plt.legend()
-plt.show()
-```
-This code will produce the following output:
-```bash
-Solution is: [-3.0958051486911997, 0.4159905027317925]
-```
-As well as a plot that should look similar to the following image:
-
-![](./docs/media/sample_opt.png)
