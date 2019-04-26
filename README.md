@@ -138,11 +138,11 @@ is a n X 2 list of lists or 2d numpy array with shape (n,2)
        - **best : list** 
          The member of the population that had the lowest
          objective value in the point set having the form
-         [f(x), x[0], x[1], ..., x[n-1]]
+         `[f(x), x[0], x[1], ..., x[n-1]]`
        - **worst : list**
          The member of the population that had the highest
          objective value in the point set having the form
-         [f(x), x[0], x[1], ..., x[n-1]]
+         `[f(x), x[0], x[1], ..., x[n-1]]`
        - **final_error : float**
          The optimization convergence value upon termination
        - **pointset :  list, shape(m, n)** The entire point set state upon termination having 
