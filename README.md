@@ -76,9 +76,9 @@ minimize f(x)
 subject to:
 	g(x) <= 0
 	bound[0][0] <= x[0] <= bound[0][1]
-	bound[1][0] <= x[0] <= bound[1][1]
+	bound[1][0] <= x[1] <= bound[1][1]
 	...
-	bound[n][0] <= x[0] <= bound[n][1]
+	bound[n][0] <= x[n] <= bound[n][1]
 
 where n is the number of decsision variables and bound
 is a n X 2 list of lists or 2d numpy array with shape (n,2)
