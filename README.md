@@ -40,12 +40,13 @@ You can install the lite versions via pip or using the setup.py script in the so
 
 #### Via pip
 
-Lpfgopt may be installed with pip using the following command:
+The `lpfgopt` package may be installed with `pip` using the following command:
+
 ```bash
 $ pip install lpfgopt-lite # You may need root privileges or the --user tag
 ```
 
-If you wish to install locally with pip you may do the following:
+If you wish to install locally with `pip` you may do the following:
 - Download the 'lite' branch and unzip the archive or clone it with git.
 - Open the main directory where "setup.py" is located and run the following command:
   ```bash
