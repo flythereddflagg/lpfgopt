@@ -162,39 +162,39 @@ As well as a plot that should look similar to the following image:
   
   - **solution : dict** A dictionary containing the results of the optimization.
        The members of the solution are listed below.
-       - **x : list** 
+       - **'x' : list** 
          The solution vector or the vector of 
          decision variables that produced the lowest 
          objective function value
        - **success : bool**
          Whether or not the optimizer exited successfully.
-       - **status : int**
-         Termination status of the optimizer. Its value 
-         depends on the underlying solver. Refer to 
-         message for details.
-       - **message : string**
+       - **'status' : int**
+         Termination status of the optimizer. Its value may
+         be 0 for a sucessful optimization or another value
+         for failure. Refer to message for details.
+       - **'message' : string**
          Description of the cause of the termination.
-       - **fun: float**
+       - **'fun': float**
          The objective function value at 'x'
-       - **nfev : int**
+       - **'nfev' : int**
          The number of function evaluations of the objective
          function
-       - **nit : int**
+       - **'nit' : int**
          The number of iterations performed
-       - **maxcv : float**
+       - **'maxcv' : float**
          The maximum constraint violation evaluated during
          optimization
-       - **best : list** 
+       - **'best' : list** 
          The member of the population that had the lowest
          objective value in the point set having the form
          `[f(x), x[0], x[1], ..., x[n-1]]`
-       - **worst : list**
+       - **'worst' : list**
          The member of the population that had the highest
          objective value in the point set having the form
          `[f(x), x[0], x[1], ..., x[n-1]]`
-       - **final_error : float**
+       - **'final_error' : float**
          The optimization convergence value upon termination
-       - **pointset :  list, shape(m, n)** The entire point set state upon termination having 
+       - **'pointset' :  list, shape(m, n)** The entire point set state upon termination having 
          the form:
          ```
           [
