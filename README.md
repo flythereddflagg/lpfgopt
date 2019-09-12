@@ -7,25 +7,14 @@
 
 ### About:
 
-This package is based the 
-<em><a href="http://www.r3eda.com/leapfrogging-optimization-algorithm/">Leapfrogging Optimization 
-Algorithm</a></em>
-published by 
-<a href="http://www.r3eda.com/about-russ/">Dr. R. Russell Rhinehart</a>.
+This package is based the [*Leapfrogging Optimization Algorithm*](http://www.r3eda.com/leapfrogging-optimization-algorithm/) published by [Dr. R. Russell Rhinehart](http://www.r3eda.com/about-russ/).
 
 The following publications explain the technique and may be found on the website:
-  - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar,
-    “Leapfrogging and Synoptic Leapfrogging: a new optimization approach”,
-    Computers & Chemical Engineering, Vol. 40, 11 May 2012, pp. 67-81.
-  - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart,
-    “Improved Initialization of Players in Leapfrogging Optimization”,
-    Computers & Chemical Engineering, Vol. 60, 2014, 426-429.
-  - Rhinehart, R. R.,
-    “Convergence Criterion in Optimilsation of Stochastic Processes”,
-    Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
+  - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar, “Leapfrogging and Synoptic Leapfrogging: a new optimization approach”, Computers & Chemical Engineering, Vol. 40, 11 May 2012, pp. 67-81.
+  - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart, “Improved Initialization of Players in Leapfrogging Optimization”, Computers & Chemical Engineering, Vol. 60, 2014, 426-429.
+  - Rhinehart, R. R., “Convergence Criterion in Optimilsation of Stochastic Processes”, Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
 
-This is the stripped down version of the package with minimal tools. It is written in pure Python to allow compatibility
-for the alpha versions until the full version can be released.
+This is the stripped down version of the package with minimal tools. It is written in pure Python to allow compatibility for the alpha versions until the full version can be released.
 
 ## Installation 
 

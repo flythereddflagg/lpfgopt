@@ -60,7 +60,7 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
 
 
 
-def sphere_constr_test():
+def test_sphere_constr_test():
     """
     Constrained sphere function benchmark
     """
@@ -84,7 +84,7 @@ def sphere_constr_test():
 
     
         
-def rosenbrock_line_cubic_test():
+def test_rosenbrock_line_cubic_test():
     """
     Rosenbrock function constrained with a cubic and a line benchmark
     """
@@ -119,7 +119,7 @@ def rosenbrock_line_cubic_test():
 
 
 
-def rosenbrock_disk_test():
+def test_rosenbrock_disk_test():
     """
     Rosenbrock function constrained to a disk benchmark
     """
@@ -142,7 +142,7 @@ def rosenbrock_disk_test():
     
     
 
-def mishra_bird_constr_test():
+def test_mishra_bird_constr_test():
     """
     Mishra's Bird function - constrained benchmark
     """
@@ -173,7 +173,7 @@ def mishra_bird_constr_test():
     
    
 
-def simionescu_test():
+def test_simionescu_test():
     """
     Simionescu function benchmark
     """

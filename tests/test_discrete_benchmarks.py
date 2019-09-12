@@ -60,7 +60,7 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
         
 
 
-def rosenbrock_discrete_test():
+def test_rosenbrock_discrete_test():
     """
     Rosenbrock function constrained to a disk benchmark
     """
@@ -85,7 +85,7 @@ def rosenbrock_discrete_test():
     
     
     
-def sphere_constr_test():
+def test_sphere_constr_test():
     """
     Constrained sphere function benchmark
     """

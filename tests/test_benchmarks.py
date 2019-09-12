@@ -1,5 +1,5 @@
 """
-filename       : benchmark_tests.py
+filename       : benchmarks.py
 title          : Unconstrained Benchmark Tests For the LeapFrog Optimizer
 author         : Mark Redd
 email          : redddogjr@gmail.com
@@ -64,7 +64,7 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
     
     
 
-def rastrigin_test():
+def test_rastrigin():
     """
     Rastrigin function benchmark
     """
@@ -86,7 +86,7 @@ def rastrigin_test():
     run(f, bounds, check, options)
 
 
-def ackley_test():
+def test_ackley():
     """
     Ackley function benchmark
     """
@@ -109,7 +109,7 @@ def ackley_test():
         
         
 
-def sphere_test():
+def test_sphere():
     """
     Sphere function benchmark
     """
@@ -129,7 +129,7 @@ def sphere_test():
     run(f, bounds, check, options)
         
         
-def rosenbrock_test():
+def test_rosenbrock():
     """
     Rosenbrock function benchmark
     """
@@ -150,7 +150,7 @@ def rosenbrock_test():
 
 
 
-def beale_test():
+def test_beale():
     """
     Beale function benchmark
     """
@@ -173,7 +173,7 @@ def beale_test():
 
 
 
-def goldstein_price_test():
+def test_goldstein_price():
     """
     Goldstein–Price function benchmark
     """
@@ -199,7 +199,7 @@ def goldstein_price_test():
   
     
 
-def booth_test():
+def test_booth():
     """
     Booth function benchmark
     """
@@ -220,7 +220,7 @@ def booth_test():
 
 
 
-def bulkin6_test():
+def test_bulkin6():
     """
     Bukin function N.6 benchmark
     """
@@ -242,7 +242,7 @@ def bulkin6_test():
  
     
     
-def matyas_test():
+def test_matyas():
     """
     Matyas function benchmark
     """
@@ -263,7 +263,7 @@ def matyas_test():
 
 
     
-def levi13_test():
+def test_levi13():
     """
     Lévi function N.13 benchmark
     """
@@ -286,7 +286,7 @@ def levi13_test():
 
 
 
-def himmelblau_test():
+def test_himmelblau():
     """
     Himmelblau's function benchmark
     """
@@ -308,7 +308,7 @@ def himmelblau_test():
 
 
 
-def three_hump_camel_test():
+def test_three_hump_camel():
     """
     Three-hump camel function benchmark
     """
@@ -328,7 +328,7 @@ def three_hump_camel_test():
     run(f, bounds, check, options)  
     
     
-def easom_test():
+def test_easom():
     """
     Easom function benchmark
     """
@@ -351,7 +351,7 @@ def easom_test():
     
     
 
-def cross_in_tray_test():
+def test_cross_in_tray():
     """
     Cross-in-tray function benchmark
     """
@@ -374,7 +374,7 @@ def cross_in_tray_test():
     
     
 
-def eggholder_test():
+def test_eggholder():
     """
     Eggholder function benchmark
     """
@@ -399,7 +399,7 @@ def eggholder_test():
     
     
 
-def holder_table_test():
+def test_holder_table():
     """
     Hölder table function benchmark
     """
@@ -422,7 +422,7 @@ def holder_table_test():
     
     
 
-def mccormick_test():
+def test_mccormick():
     """
     McCormick function benchmark
     """
@@ -444,7 +444,7 @@ def mccormick_test():
     
     
 
-def schaffer2_test():
+def test_schaffer2():
     """
     Schaffer function N.2 benchmark
     """
@@ -467,7 +467,7 @@ def schaffer2_test():
     
     
 
-def schaffer4_test():
+def test_schaffer4():
     """
     Schaffer function N.4 benchmark
     """
@@ -490,7 +490,7 @@ def schaffer4_test():
     
     
 
-def styblinski_tang_test():
+def test_styblinski_tang():
     """
     Styblinski–Tang function benchmark
     """

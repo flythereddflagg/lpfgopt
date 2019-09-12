@@ -26,7 +26,7 @@ options = {
     "pointset"    : None
     }
 
-def numpy_test():
+def test_numpy_test():
     """
     numpy and minimize compatibility test
     """    
@@ -39,7 +39,7 @@ def numpy_test():
         assert solution["best"][i] == check[i], f"numpy test failed on {i}"
 
         
-def scipy_test():
+def test_scipy_test():
     """
     scipy.optimize.minimize compatibility test
     """    

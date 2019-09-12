@@ -1,6 +1,6 @@
 from lpfgopt.leapfrog import LeapFrog
 
-def unit_test():
+def test_unit():
     """
     General use unit test
     """

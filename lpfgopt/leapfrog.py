@@ -40,8 +40,8 @@ Example usage:
 ...     [-10.0,10.0],
 ...     [-10.0,10.0]]
 >>>
-... # Constrained and discrete optimization ----
-... options = {
+>>> # Constrained and discrete optimization ----
+>>> options = {
 ...     "fun"         : obj,
 ...     "bounds"      : int2,
 ...     "args"        : (),
