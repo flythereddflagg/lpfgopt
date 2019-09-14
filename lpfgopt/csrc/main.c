@@ -1,5 +1,7 @@
 #include "dbg.h"
 #include "lpfgopt.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 double f(double* x)
 {
@@ -13,18 +15,31 @@ double g(double* x)
 
 int main(int argc, char** argv)
 {
-    size_t xlen = 2
-    double lower[xlen] = {-20.0, -20.0};
-    double upper[xlen] = { 20.0,  20.0};
-    double* plower = &lower;
-    double* pupper = &upper;
+    size_t i;
+    size_t xlen = 2;
+    double* lower = malloc(sizeof(double)*xlen);
+    double* upper = malloc(sizeof(double)*xlen);
     double (*fptr)(double* x) = &f;
     double (*gptr)(double* x) = &g;
     
+    for(i = 0; i < xlen; i++){
+        lower[i] = -20.0;
+        upper[i] =  20.0;
+    }
 
     double* out = minimize(
-                        fptr, plower, pupper, xlen, 20, 
+                        fptr, lower, upper, xlen, 20, 
                         gptr, NULL, 0, 100, 1e-3, 1234);
+    
+    free(lower);
+    free(upper);
+    for(i = 0; i < xlen+1; i++){
+        printf("%f", out[i]);
+    }
+    printf("\n");
+
+    check(out, "out does not exist!");
+    free(out);
 
     return 0;
 

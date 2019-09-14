@@ -63,7 +63,8 @@ extern "C"
 LPFGOPTAPI double* LPFGOPTCALL minimize(
                 double (*fptr)(double*), double* lower, double* upper, 
                 size_t xlen, size_t points, double (*gptr)(double*), 
-                size_t* discrete, size_t maxit, double tol, int seedval);
+                size_t* discrete, size_t discretelen, size_t maxit, 
+                double tol, int seedval);
 
 #ifdef __cplusplus
 } // __cplusplus defined.

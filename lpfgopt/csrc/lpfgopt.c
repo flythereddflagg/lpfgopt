@@ -11,8 +11,8 @@ typedef struct {
 
 typedef struct {
 
-    double* (*f)(double*, double*);
-    double* (*g)(double*);
+    double (*f)(double*);
+    double (*g)(double*);
     size_t xlen;
 
     array_2d* bounds;
@@ -82,13 +82,6 @@ void free_array_2d(array_2d* array)
     if(array) free(array);
 }
 
-void iterate(leapfrog_data* self)
-{
-    leapfrog(self);
-    get_best_worst(self);
-    calculate_convergence(self);
-    self->total_iters++;
-}
 
 void free_data(leapfrog_data* data)
 {
@@ -119,7 +112,8 @@ void calculate_convergence(leapfrog_data* self)
 leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower, 
                             double* upper, size_t xlen, size_t points, 
                             double (*gptr)(double*), size_t* discrete,
-                            size_t maxit, double tol, int seedval)
+                            size_t discretelen, size_t maxit, double tol, 
+                            int seedval)
 {
     leapfrog_data* data = (leapfrog_data*) malloc(sizeof(leapfrog_data));
     data->f = fptr;
@@ -144,6 +138,15 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
 }
 
 
+void iterate(leapfrog_data* self)
+{
+    leapfrog(self);
+    get_best_worst(self);
+    calculate_convergence(self);
+    self->total_iters++;
+}
+
+
 LPFGOPTAPI double* LPFGOPTCALL minimize(
                 double (*fptr)(double*), double* lower, double* upper, 
                 size_t xlen, size_t points, double (*gptr)(double*), 
@@ -151,9 +154,10 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
                 double tol, int seedval)
 {
     size_t iters;
-    double* best = (double*) malloc(sizeof(double)*(xlen+1))
+    double* best = (double*) malloc(sizeof(double)*(xlen+1));
     leapfrog_data* data = init_leapfrog(fptr, lower, upper, xlen, points, 
-                                       gptr, discrete, maxit, tol, seedval);
+                                       gptr, discrete, discretelen, maxit, 
+                                       tol, seedval);
     for(iters = 0; iters < data->maxit; iters++) {
         iterate(data);
         if(data->error < data->tol){
@@ -162,7 +166,7 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
             return best;
         }
     }
-    
+    log_warn("Maximum iterations exceeded.");
     cpy_data(data->pointset->array[data->besti], best, xlen+1);
     free_data(data);
     return best;
