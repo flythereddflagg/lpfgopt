@@ -1,6 +1,8 @@
 #include "dbg.h"
 #include "lpfgopt.h"
 #include <stdlib.h>
+#include <time.h>
+
 
 typedef struct {
     size_t rows;
@@ -15,8 +17,11 @@ typedef struct {
     double (*g)(double*);
     size_t xlen;
 
-    array_2d* bounds;
+    double* lower;
+    double* upper;
     array_2d* pointset;
+
+    double* args;
     
     size_t* discrete;
     size_t discretelen;
@@ -39,6 +44,10 @@ typedef struct {
 
 void cpy_data(double* src, double* dest, size_t len)
 {
+/**
+* copies an array of length @param len from
+* @param src to @param dest.
+*/
     for(size_t i = 0; i < len; i++){
         dest[i] = src[i];
     }
@@ -74,7 +83,10 @@ error:
 
 void free_array_2d(array_2d* array)
 {
-/* Function for freeing mallocs for two_dimensional_array */
+/** 
+* Frees all mallocs associated with @funtion zeros thereby freeing
+* @param array.
+*/
     for (int i = 0; i < array->rows; i++){
         if (array->array[i]) free(array->array[i]);
     }
@@ -85,19 +97,60 @@ void free_array_2d(array_2d* array)
 
 void free_data(leapfrog_data* data)
 {
-    if(data->discrete) free(data->discrete);
+/**
+* Frees all mallocs associated with @function init_leapfrog
+* will free an allocated leapfrog_data struct.
+*/
+    if(data->args) free(data->args);
     if(data->pointset) free_array_2d(data->pointset);
-    if(data->bounds) free_array_2d(data->bounds);
     if(data) free(data);
 }
 
-void leapfrog(leapfrog_data* self)
+
+double uniform(double lower, double upper)
+{
+/**
+* @returns a random double between
+* @param lower and @param upper following a
+* uniform distribution.
+*/
+    double frac = 1.0 * rand() / RAND_MAX;
+    return (upper - lower) * frac + lower;
+}
+
+
+void enforce_constraints(leapfrog_data* self)
 {
     ;
 }
 
 
-void get_best_worst(leapfrog_data* self)
+void eval_best_worst(leapfrog_data* self)
+{
+/**
+* Evaluates and adjusts @param self's best and worst
+* attributes to the best and worst indices in the pointset.
+*/
+    for(size_t i = 0; i < self->pointset->rows; i++){
+        if(self->pointset->array[i][0] <\
+                self->pointset->array[self->best][0]){
+            self->best = i;
+        }
+        if(self->pointset->array[i][0] >\
+                self->pointset->array[self->worst][0]){
+            self->worst = i;
+        }
+    }
+}
+
+
+void enforce_discrete(leapfrog_data* self)
+{
+    ;
+}
+
+
+void leapfrog(leapfrog_data* self)
 {
     ;
 }
@@ -113,8 +166,12 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
                             double* upper, size_t xlen, size_t points, 
                             double (*gptr)(double*), size_t* discrete,
                             size_t discretelen, size_t maxit, double tol, 
-                            int seedval)
+                            size_t seedval)
 {
+/**
+* Allocates memory for and initalizes the main leapfrog_data struct
+* to be used in the optimization.
+*/
     leapfrog_data* data = (leapfrog_data*) malloc(sizeof(leapfrog_data));
     data->f = fptr;
     data->g = gptr;
@@ -130,18 +187,37 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     data->besti = 0;
     data->worsti = 0;
     data->error = 100.0;
-    data->bounds = zeros(data->xlen, 2);
+    data->lower = lower;
+    data->upper = upper;
+    data->discrete = discrete;
     data->pointset = zeros(points, data->xlen + 1);
-    data->discrete = (size_t*) malloc(sizeof(size_t)*discretelen);
+    data->args = (double*) malloc(sizeof(double)*data->xlen);
 
+    if(seedval) srand(seedval);
+    else srand(time(0));
+
+    for(size_t i = 0; i < data->pointset->rows; i++){
+        for(size_t j = 1; j < data->pointset->columns; j++){
+            data->pointset->array[i][j] = uniform(data->lower[j-1],
+                                                  data->upper[j-1]);
+            data->args[j-1] = data->pointset->array[i][j];
+        }
+        data->pointset->array[i][0] = data->f(data->args);
+        data->nfev++;
+    }
+    enforce_constraints(data);
+    eval_best_worst(data);
     return data;
 }
 
 
 void iterate(leapfrog_data* self)
 {
+/**
+* Completes one iteration of the leapfrog optimization algorithm.
+*/
     leapfrog(self);
-    get_best_worst(self);
+    eval_best_worst(self);
     calculate_convergence(self);
     self->total_iters++;
 }
@@ -153,6 +229,11 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
                 size_t* discrete, size_t discretelen, size_t maxit, 
                 double tol, int seedval)
 {
+/*
+* Minimizes a function until the convergence criteria are 
+* satisfied or the number of iterations exceeds 
+* 'maxit'.
+*/
     size_t iters;
     double* best = (double*) malloc(sizeof(double)*(xlen+1));
     leapfrog_data* data = init_leapfrog(fptr, lower, upper, xlen, points, 
