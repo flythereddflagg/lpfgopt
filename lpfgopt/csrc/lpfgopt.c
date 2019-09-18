@@ -122,56 +122,87 @@ void eval_best_worst(leapfrog_data* self)
 }
 
 
-void enforce_discrete(leapfrog_data* self)
+void enforce_discrete(leapfrog_data* self, size_t i, size_t j)
 {
 /**
 * Enforces discrete variables by changing all applicable 
 * values to whole double values.
 */
-    if(!discrete) return;
-    for(size_t i = 0; i < self->points; i++){
-        for(size_t dis = 0; dis < self->discretelen; dis++){
-            self->pointset[i][dis+1] = (double)(int)self->pointset[i][dis+1];
+    if(!self->discrete) return;
+    for(size_t dis = 0; dis < self->discretelen; dis++){
+        if(self->discrete[dis] == j-1){
+            self->pointset[i][j] = (double)(int)self->pointset[i][j];
         }
     }
 }
 
 
-void enforce_constraints(leapfrog_data* self)
+void enforce_constraints(leapfrog_data* self, size_t row)
 {
 /**
-Enforces the constraint penalties on any infeasible member of the 
-point set. The penalty to any infeasible member is to be made worse 
-than the worst member of the point set. This will ensure all 
-infeasible members are eventually eliminated.
-
-If a constraint function is not specified, then this 
-function does nothing.
-
-A constraint function must be designed to return a single 
-value of the form:
-
-fconstraint(x) <= 0
-
-This means a return value > 0 from the constraint function
-indicates the constraint has been violated, otherwise the point
-is feasible.
-"""
-if self.fconstraint is not None:
-    big = max([abs(i[0]) for i in self.pointset])
-    for i in range(self.points):
-        constraint_value = self.fconstraint(self.pointset[i][1:])
-        if constraint_value > 0:
-            if constraint_value > self.maxcv:
-                self.maxcv = constraint_value
-            self.pointset[i][0] = big + constraint_value
+* Enforces the constraint penalties on any infeasible member of the 
+* point set. The penalty to any infeasible member is to be made worse 
+* than the worst member of the point set. This will ensure all 
+* infeasible members are eventually eliminated.
+* 
+* If a constraint function is not specified, then this 
+* function does nothing.
+* 
+* A constraint function must be designed to return a single 
+* value of the form:
+* 
+* fconstraint(x) <= 0
+* 
+* This means a return value > 0 from the constraint function
+* indicates the constraint has been violated, otherwise the point
+* is feasible.
 */
+    if(!self->g) return;
+    double big = self->pointset[0][0];
+    double mbig;
+    double constraint_value;
+    for(size_t i = 0; i < self->points; i++){
+        mbig = self->pointset[i][0];
+        if(mbig < 0.0) mbig = -1.0 * mbig;
+        if(mbig > big) big = mbig;
+    }
+    for(size_t j = 1; j < self->xlen + 1; j++){
+        self->args[j-1] = self->pointset[row][j];
+    }
+    constraint_value = self->g(self->args);
+    if(constraint_value > 0.0){
+        if(constraint_value > self->maxcv) self->maxcv = constraint_value;
+        self->pointset[row][0] = big + constraint_value;
+    }
 }
 
 
 void leapfrog(leapfrog_data* self)
 {
-    ;
+/**
+Core step in the leapfrogging algorithm. Takes a best and worst
+index of the 'pointset' and generates a new point in place of 
+the worst by "leapfrogging" over the point corresponding to the 
+'best' index.
+*/
+    double b1,b2;
+    for(size_t j = 1; j < self->xlen; j++){
+        b1 = self->pointset[self->besti][j];
+        b2 = self->pointset[self->besti][j] * 2.0 -\
+            self->pointset[self->worsti][j];
+        if(b2 < b1){
+            b1 = b1 + b2;
+            b2 = b1 - b2;
+            b1 = b1 - b2;
+        }
+        if(b1 < self->lower[j]) b1 = self->lower[j];
+        if(b2 > self->upper[j]) b2 = self->upper[j];
+        self->pointset[self->worsti][j] = uniform(b1, b2);
+        enforce_discrete(self, self->worsti, j);
+        self->args[j-1] = self->pointset[self->worsti][j];
+    }
+    self->pointset[self->worsti][0] = self->f(self->args);
+    enforce_constraints(self, self->worsti);
 }
 
 
@@ -210,13 +241,15 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     for(size_t i = 0; i < self->points; i++){
         for(size_t j = 1; j < self->xlen + 1; j++){
             self->pointset[i][j] = uniform(self->lower[j-1], self->upper[j-1]);
-            enforce_discrete(self); // SLOW
+            enforce_discrete(self, i, j);
             self->args[j-1] = self->pointset[i][j];
         }
         self->pointset[i][0] = self->f(self->args);
         self->nfev++;
     }
-    enforce_constraints(self);
+    for(size_t i = 0; i < self->points; i++){
+        enforce_constraints(self, i);
+    }
     eval_best_worst(self);
     return self;
 }

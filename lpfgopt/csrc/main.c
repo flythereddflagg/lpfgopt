@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     free(lower);
     free(upper);
     for(i = 0; i < xlen+1; i++){
-        printf("%f", out[i]);
+        printf("%f ", out[i]);
     }
     printf("\n");
 
