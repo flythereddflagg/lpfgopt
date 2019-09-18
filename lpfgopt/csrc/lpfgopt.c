@@ -2,6 +2,7 @@
 #include "lpfgopt.h"
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 
 typedef struct {
@@ -30,6 +31,7 @@ typedef struct {
     size_t besti;           // the index of the best point
     size_t worsti;          // the index of the worst point
     double error;           // the value of the convergence error
+    double tol;             // convergence tolerance
 
 } leapfrog_data;
 
@@ -162,8 +164,7 @@ void enforce_constraints(leapfrog_data* self, size_t row)
     double mbig;
     double constraint_value;
     for(size_t i = 0; i < self->points; i++){
-        mbig = self->pointset[i][0];
-        if(mbig < 0.0) mbig = -1.0 * mbig;
+        mbig = fabs(self->pointset[i][0]);
         if(mbig > big) big = mbig;
     }
     for(size_t j = 1; j < self->xlen + 1; j++){
@@ -180,10 +181,10 @@ void enforce_constraints(leapfrog_data* self, size_t row)
 void leapfrog(leapfrog_data* self)
 {
 /**
-Core step in the leapfrogging algorithm. Takes a best and worst
-index of the 'pointset' and generates a new point in place of 
-the worst by "leapfrogging" over the point corresponding to the 
-'best' index.
+* Core step in the leapfrogging algorithm. Takes a best and worst
+* index of the 'pointset' and generates a new point in place of 
+* the worst by "leapfrogging" over the point corresponding to the 
+* 'best' index.
 */
     double b1,b2;
     for(size_t j = 1; j < self->xlen; j++){
@@ -208,14 +209,45 @@ the worst by "leapfrogging" over the point corresponding to the
 
 void calculate_convergence(leapfrog_data* self)
 {
-    ;
+/**
+* Calculates a convergence value by calculating the relative 
+* distance between the objective values of the best and 
+* worst points and average distance between each point and
+* the best point and summing the two values together. This
+* convergence value is taken as the error of the optimization
+* and once the error <= tolerance the optimization ends.
+*/
+    double obj_best = self->pointset[self->besti][0];
+    double obj_worst = self->pointset[self->worsti][0];
+    double norm1, err_obj, dist_sum = 0.0, constraint_penalty = 0.0;
+
+    if(fabs(obj_best) < self->tol) norm1 = self->tol;
+    else norm1 = obj_best;
+    err_obj = fabs((obj_worst - obj_best)/norm1);
+    for(size_t i = 0; i < self->points; i++){
+        for(size_t j = 1; j < self->xlen + 1; j++){
+            self->args[j-1] = self->pointset[i][j];
+        }
+        if(self->g && self->g(self->args) > 0.0){
+            constraint_penalty = 2.0 * self->tol;
+        }
+        for(size_t j = 1; j < self->xlen + 1; j++){
+            if(fabs(self->pointset[self->besti][j]) < self->tol){
+                norm1 = self->tol;
+            }
+            else norm1 = self->pointset[self->besti][j];
+            dist_sum += fabs(
+                (self->pointset[self->besti][j] - self->args[j-1])/norm1);
+        }
+    }
+    self->error = err_obj + dist_sum + constraint_penalty;
 }
 
 
 leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower, 
                             double* upper, size_t xlen, size_t points, 
                             double (*gptr)(double*), size_t* discrete,
-                            size_t discretelen)
+                            size_t discretelen, double tol)
 {
 /**
 * Allocates memory for and initalizes the main leapfrog_data struct
@@ -235,6 +267,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     self->upper = upper;
     self->discrete = discrete;
     self->discretelen = discretelen;
+    self->tol = tol;
     self->pointset = zeros(points, self->xlen + 1);
     self->args = (double*) malloc(sizeof(double)*self->xlen);
 
@@ -270,7 +303,7 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
                 double (*fptr)(double*), double* lower, double* upper, 
                 size_t xlen, size_t points, double (*gptr)(double*), 
                 size_t* discrete, size_t discretelen, size_t maxit, 
-                double tol, int seedval)
+                double tol, size_t seedval)
 {
 /**
 * Minimizes a function until the convergence criteria are 
@@ -284,7 +317,7 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
     else srand(time(0));
 
     leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points, 
-                                       gptr, discrete, discretelen); 
+                                       gptr, discrete, discretelen, tol); 
     for(iters = 0; iters < maxit; iters++) {
         iterate(self);
         if(self->error < tol){

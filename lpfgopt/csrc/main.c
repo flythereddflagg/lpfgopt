@@ -5,13 +5,13 @@
 
 double f(double* x)
 {
-    return x[0]*x[0] + x[1]*x[1];
+    return x[0]*x[0] + x[1]*x[1] + 100;
 }
 
-double g(double* x)
-{
-    return -x[0] *x[0] + 10 - x[1];
-}
+// double g(double* x)
+// {
+//     return -x[0] *x[0] + 10 - x[1];
+// }
 
 int main(int argc, char** argv)
 {
@@ -20,16 +20,19 @@ int main(int argc, char** argv)
     double* lower = malloc(sizeof(double)*xlen);
     double* upper = malloc(sizeof(double)*xlen);
     double (*fptr)(double* x) = &f;
-    double (*gptr)(double* x) = &g;
+    // double (*gptr)(double* x) = &g;
+    // size_t* discrete = malloc(sizeof(size_t));
     
+    // discrete[0] = 0;
+
     for(i = 0; i < xlen; i++){
-        lower[i] = -20.0;
-        upper[i] =  20.0;
+        lower[i] = -5.0;
+        upper[i] =  5.0;
     }
 
     double* out = minimize(
                         fptr, lower, upper, xlen, 20, 
-                        gptr, NULL, 0, 100, 1e-3, 1234);
+                        NULL, NULL, 0, 1e5, 1e-3, 0);
     
     free(lower);
     free(upper);
