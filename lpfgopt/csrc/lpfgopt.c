@@ -34,6 +34,18 @@ typedef struct {
 } leapfrog_data;
 
 
+double uniform(double lower, double upper)
+{
+/**
+* @returns a random double between
+* @param lower and @param upper following a
+* uniform distribution.
+*/
+    double frac = 1.0 * rand() / RAND_MAX;
+    return (upper - lower) * frac + lower;
+}
+
+
 void cpy_data(double* src, double* dest, size_t len)
 {
 /**
@@ -93,24 +105,6 @@ void free_data(leapfrog_data* self)
 }
 
 
-double uniform(double lower, double upper)
-{
-/**
-* @returns a random double between
-* @param lower and @param upper following a
-* uniform distribution.
-*/
-    double frac = 1.0 * rand() / RAND_MAX;
-    return (upper - lower) * frac + lower;
-}
-
-
-void enforce_constraints(leapfrog_data* self)
-{
-    ;
-}
-
-
 void eval_best_worst(leapfrog_data* self)
 {
 /**
@@ -130,7 +124,48 @@ void eval_best_worst(leapfrog_data* self)
 
 void enforce_discrete(leapfrog_data* self)
 {
-    ;
+/**
+* Enforces discrete variables by changing all applicable 
+* values to whole double values.
+*/
+    if(!discrete) return;
+    for(size_t i = 0; i < self->points; i++){
+        for(size_t dis = 0; dis < self->discretelen; dis++){
+            self->pointset[i][dis+1] = (double)(int)self->pointset[i][dis+1];
+        }
+    }
+}
+
+
+void enforce_constraints(leapfrog_data* self)
+{
+/**
+Enforces the constraint penalties on any infeasible member of the 
+point set. The penalty to any infeasible member is to be made worse 
+than the worst member of the point set. This will ensure all 
+infeasible members are eventually eliminated.
+
+If a constraint function is not specified, then this 
+function does nothing.
+
+A constraint function must be designed to return a single 
+value of the form:
+
+fconstraint(x) <= 0
+
+This means a return value > 0 from the constraint function
+indicates the constraint has been violated, otherwise the point
+is feasible.
+"""
+if self.fconstraint is not None:
+    big = max([abs(i[0]) for i in self.pointset])
+    for i in range(self.points):
+        constraint_value = self.fconstraint(self.pointset[i][1:])
+        if constraint_value > 0:
+            if constraint_value > self.maxcv:
+                self.maxcv = constraint_value
+            self.pointset[i][0] = big + constraint_value
+*/
 }
 
 
@@ -174,8 +209,8 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
 
     for(size_t i = 0; i < self->points; i++){
         for(size_t j = 1; j < self->xlen + 1; j++){
-            self->pointset[i][j] = uniform(self->lower[j-1],
-                                                  self->upper[j-1]);
+            self->pointset[i][j] = uniform(self->lower[j-1], self->upper[j-1]);
+            enforce_discrete(self); // SLOW
             self->args[j-1] = self->pointset[i][j];
         }
         self->pointset[i][0] = self->f(self->args);
@@ -204,7 +239,7 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
                 size_t* discrete, size_t discretelen, size_t maxit, 
                 double tol, int seedval)
 {
-/*
+/**
 * Minimizes a function until the convergence criteria are 
 * satisfied or the number of iterations exceeds 
 * 'maxit'.
