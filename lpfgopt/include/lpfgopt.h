@@ -7,25 +7,28 @@
 //#ifndef LPFGOPT_H
 //#define LPFGOPT_H
 
-#ifdef _WIN32
+// #ifdef _WIN32
 
-  /* You should define LPFGOPT_EXPORTS *only* when building the DLL. */
-  #ifdef LPFGOPT_EXPORTS
-    #define LPFGOPTAPI __declspec(dllexport)
-  #else
-    #define LPFGOPTAPI __declspec(dllimport)
-  #endif
+//   /* You should define LPFGOPT_EXPORTS *only* when building the DLL. */
+//   #ifdef LPFGOPT_EXPORTS
+//     #define LPFGOPTAPI __declspec(dllexport)
+//   #else
+//     #define LPFGOPTAPI __declspec(dllimport)
+//   #endif
 
-  /* Define calling convention in one place, for convenience. */
-  #define LPFGOPTCALL __cdecl
+//   /* Define calling convention in one place, for convenience. */
+//   #define LPFGOPTCALL __cdecl
 
-#else /* _WIN32 not defined. (LINUX OR MAC) */
+// #else /* _WIN32 not defined. (LINUX OR MAC) */
 
-  /* Define with no value on non-Windows OSes. */
-  #define LPFGOPTAPI
-  #define LPFGOPTCALL
+//   /* Define with no value on non-Windows OSes. */
+//   #define LPFGOPTAPI
+//   #define LPFGOPTCALL
 
-#endif
+// #endif
+
+#define LPFGOPTAPI
+#define LPFGOPTCALL
 
 /* Make sure functions are exported with C linkage under C++ compilers. */
 
