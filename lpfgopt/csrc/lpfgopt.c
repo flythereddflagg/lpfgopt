@@ -15,20 +15,20 @@ typedef struct {
 
     double* lower;          // the lower bounds; length = xlen
     double* upper;          // the upper bounds; length = xlen
-    double** pointset;      // the objective function values and 
+    double** pointset;      // the objective function values and
                             // corresponding points with the objective
                             // function value as the first value in each
                             // row; shape = (points, xlen + 1)
-    
+
     double* args;           // the array holding the current arguments to be
                             // passed into the function; length = xlen
-    
+
     size_t* discrete;       // array of discrete indices
     size_t discretelen;     // length of discrete
 
     size_t nfev;            // number of function evaluations
     double maxcv;           // maxiumum constraint violation
-    
+
     size_t besti;           // the index of the best point
     size_t worsti;          // the index of the worst point
     double error;           // the value of the convergence error
@@ -44,8 +44,12 @@ double uniform(double lower, double upper)
 * @param lower and @param upper following a
 * uniform distribution.
 */
+    check(lower < upper, "Invalid input!");
     double frac = 1.0 * rand() / RAND_MAX;
     return (upper - lower) * frac + lower;
+
+error:
+    return 0.0;
 }
 
 
@@ -63,7 +67,7 @@ void cpy_data(double* src, double* dest, size_t len)
 
 double** zeros(size_t rows, size_t columns)
 {
-    check(rows > 0 && columns > 0, 
+    check(rows > 0 && columns > 0,
         "'rows' and 'columns' must be greater than 0.");
     size_t i;
     size_t j;
@@ -75,7 +79,7 @@ double** zeros(size_t rows, size_t columns)
             the_array[i][j] = 0.0;
         }
     }
-    
+
     return the_array;
 
 error:
@@ -85,7 +89,7 @@ error:
 
 void free_array_2d(double** array, size_t rows)
 {
-/** 
+/**
 * Frees all mallocs associated with @funtion zeros thereby freeing
 * @param array.
 */
@@ -128,7 +132,7 @@ void eval_best_worst(leapfrog_data* self)
 void enforce_discrete(leapfrog_data* self, size_t i, size_t j)
 {
 /**
-* Enforces discrete variables by changing all applicable 
+* Enforces discrete variables by changing all applicable
 * values to whole double values.
 */
     if(!self->discrete) return;
@@ -143,19 +147,19 @@ void enforce_discrete(leapfrog_data* self, size_t i, size_t j)
 void enforce_constraints(leapfrog_data* self, size_t row)
 {
 /**
-* Enforces the constraint penalties on any infeasible member of the 
-* point set. The penalty to any infeasible member is to be made worse 
-* than the worst member of the point set. This will ensure all 
+* Enforces the constraint penalties on any infeasible member of the
+* point set. The penalty to any infeasible member is to be made worse
+* than the worst member of the point set. This will ensure all
 * infeasible members are eventually eliminated.
-* 
-* If a constraint function is not specified, then this 
+*
+* If a constraint function is not specified, then this
 * function does nothing.
-* 
-* A constraint function must be designed to return a single 
+*
+* A constraint function must be designed to return a single
 * value of the form:
-* 
+*
 * fconstraint(x) <= 0
-* 
+*
 * This means a return value > 0 from the constraint function
 * indicates the constraint has been violated, otherwise the point
 * is feasible.
@@ -183,8 +187,8 @@ void leapfrog(leapfrog_data* self)
 {
 /**
 * Core step in the leapfrogging algorithm. Takes a best and worst
-* index of the 'pointset' and generates a new point in place of 
-* the worst by "leapfrogging" over the point corresponding to the 
+* index of the 'pointset' and generates a new point in place of
+* the worst by "leapfrogging" over the point corresponding to the
 * 'best' index.
 */
     double b1,b2;
@@ -211,8 +215,8 @@ void leapfrog(leapfrog_data* self)
 void calculate_convergence(leapfrog_data* self)
 {
 /**
-* Calculates a convergence value by calculating the relative 
-* distance between the objective values of the best and 
+* Calculates a convergence value by calculating the relative
+* distance between the objective values of the best and
 * worst points and average distance between each point and
 * the best point and summing the two values together. This
 * convergence value is taken as the error of the optimization
@@ -241,12 +245,13 @@ void calculate_convergence(leapfrog_data* self)
                 (self->pointset[self->besti][j] - self->args[j-1])/norm1);
         }
     }
+    log_info("\nERRS: obj: %f dst: %f", err_obj, dist_sum);
     self->error = err_obj + dist_sum + constraint_penalty;
 }
 
 
-leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower, 
-                            double* upper, size_t xlen, size_t points, 
+leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
+                            double* upper, size_t xlen, size_t points,
                             double (*gptr)(double*), size_t* discrete,
                             size_t discretelen, double tol)
 {
@@ -301,14 +306,14 @@ void iterate(leapfrog_data* self)
 
 
 LPFGOPTAPI double* LPFGOPTCALL minimize(
-                double (*fptr)(double*), double* lower, double* upper, 
-                size_t xlen, size_t points, double (*gptr)(double*), 
-                size_t* discrete, size_t discretelen, size_t maxit, 
+                double (*fptr)(double*), double* lower, double* upper,
+                size_t xlen, size_t points, double (*gptr)(double*),
+                size_t* discrete, size_t discretelen, size_t maxit,
                 double tol, size_t seedval)
 {
 /**
-* Minimizes a function until the convergence criteria are 
-* satisfied or the number of iterations exceeds 
+* Minimizes a function until the convergence criteria are
+* satisfied or the number of iterations exceeds
 * 'maxit'.
 */
     size_t iters;
@@ -321,8 +326,8 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
         srand(seed);
     }
 
-    leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points, 
-                                       gptr, discrete, discretelen, tol); 
+    leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points,
+                                       gptr, discrete, discretelen, tol);
     for(iters = 0; iters < maxit; iters++) {
         iterate(self);
         printf(" %lu %lu ", self->besti, self->worsti);

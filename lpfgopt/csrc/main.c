@@ -21,11 +21,11 @@ int main(int argc, char** argv)
     double* upper = malloc(sizeof(double)*xlen);
     double (*fptr)(double* x) = &f;
     // double (*gptr)(double* x) = &g;
-    size_t discretelen = 2;
-    size_t* discrete = malloc(sizeof(size_t)*discretelen);
-    
-    discrete[0] = 0;
-    discrete[1] = 1;
+    // size_t discretelen = 2;
+    // size_t* discrete = malloc(sizeof(size_t)*discretelen);
+
+    // discrete[0] = 0;
+    // discrete[1] = 1;
 
     for(i = 0; i < xlen; i++){
         lower[i] = -5.0;
@@ -33,16 +33,19 @@ int main(int argc, char** argv)
     }
 
     double* out = minimize(
-                        fptr, lower, upper, xlen, 20, 
-                        NULL, discrete, discretelen, 1e2, 
-                        1e-3, 1569433771);
-    
+                        fptr, lower, upper, xlen, 20,
+                        NULL, NULL, 0, 1e2,
+                        1e-1, 1569433771);
+
     free(lower);
     free(upper);
     for(i = 0; i < xlen+1; i++){
         printf("%f ", out[i]);
     }
     printf("\n");
+    double outs[2] = {out[1], out[2]};
+    double* outp = &outs;
+    printf("%f\n", f(outp));
 
     check(out, "out does not exist!");
     free(out);
