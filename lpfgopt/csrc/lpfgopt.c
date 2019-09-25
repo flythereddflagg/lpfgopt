@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <stdio.h>
 
 
 typedef struct {
@@ -314,12 +315,21 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
     double* best = (double*) malloc(sizeof(double)*(xlen+1));
 
     if(seedval) srand(seedval);
-    else srand(time(0));
+    else {
+        size_t seed = time(0);
+        printf("seed = %lu\n", seed);
+        srand(seed);
+    }
 
     leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points, 
                                        gptr, discrete, discretelen, tol); 
     for(iters = 0; iters < maxit; iters++) {
         iterate(self);
+        printf(" %lu %lu ", self->besti, self->worsti);
+        for(size_t i = 0; i < self->xlen + 1; i++){
+            printf("%f ",self->pointset[self->worsti][i]);
+        }
+        printf("Error: %f\n", self->error);
         if(self->error < tol){
             break;
         }
