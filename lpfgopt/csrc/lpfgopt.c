@@ -15,19 +15,15 @@ typedef struct {
 
     double* lower;          // the lower bounds; length = xlen
     double* upper;          // the upper bounds; length = xlen
-    double** pointset;      // the objective function values and
-                            // corresponding points with the objective
-                            // function value as the first value in each
-                            // row; shape = (points, xlen + 1)
-
-    double* args;           // the array holding the current arguments to be
-                            // passed into the function; length = xlen
+    double* objs;           // the objective function values; length = points
+    double** pointset;      // the points corresponding with objective
+                            // function values; shape = (points, xlen)
 
     size_t* discrete;       // array of discrete indices
     size_t discretelen;     // length of discrete
 
     size_t nfev;            // number of function evaluations
-    double maxcv;           // maxiumum constraint violation
+    double maxcv;           // maximum constraint violation
 
     size_t besti;           // the index of the best point
     size_t worsti;          // the index of the worst point
@@ -44,7 +40,7 @@ double uniform(double lower, double upper)
 * @param lower and @param upper following a
 * uniform distribution.
 */
-    check(lower < upper, "Invalid input!");
+    check(lower <= upper, "Invalid input! %f, %f", lower, upper);
     double frac = 1.0 * rand() / RAND_MAX;
     return (upper - lower) * frac + lower;
 
@@ -67,6 +63,9 @@ void cpy_data(double* src, double* dest, size_t len)
 
 double** zeros(size_t rows, size_t columns)
 {
+/**
+* Allocs a 2d array initialized with zeros.
+*/
     check(rows > 0 && columns > 0,
         "'rows' and 'columns' must be greater than 0.");
     size_t i;
@@ -90,7 +89,7 @@ error:
 void free_array_2d(double** array, size_t rows)
 {
 /**
-* Frees all mallocs associated with @funtion zeros thereby freeing
+* Frees all mallocs associated with @fuction zeros thereby freeing
 * @param array.
 */
     for (size_t i = 0; i < rows; i++){
@@ -106,7 +105,7 @@ void free_data(leapfrog_data* self)
 * Frees all mallocs associated with @function init_leapfrog
 * will free an allocated leapfrog_data struct.
 */
-    if(self->args) free(self->args);
+    if(self->objs) free(self->objs);
     if(self->pointset) free_array_2d(self->pointset, self->points);
     if(self) free(self);
 }
@@ -119,10 +118,10 @@ void eval_best_worst(leapfrog_data* self)
 * attributes to the best and worst indices in the pointset.
 */
     for(size_t i = 0; i < self->points; i++){
-        if(self->pointset[i][0] < self->pointset[self->besti][0]){
+        if(self->objs[i] < self->objs[self->besti]){
             self->besti = i;
         }
-        if(self->pointset[i][0] > self->pointset[self->worsti][0]){
+        if(self->objs[i] > self->objs[self->worsti]){
             self->worsti = i;
         }
     }
@@ -137,7 +136,7 @@ void enforce_discrete(leapfrog_data* self, size_t i, size_t j)
 */
     if(!self->discrete) return;
     for(size_t dis = 0; dis < self->discretelen; dis++){
-        if(self->discrete[dis] == j-1){
+        if(self->discrete[dis] == j){
             self->pointset[i][j] = (double)(int)self->pointset[i][j];
         }
     }
@@ -172,13 +171,10 @@ void enforce_constraints(leapfrog_data* self, size_t row)
         mbig = fabs(self->pointset[i][0]);
         if(mbig > big) big = mbig;
     }
-    for(size_t j = 1; j < self->xlen + 1; j++){
-        self->args[j-1] = self->pointset[row][j];
-    }
-    constraint_value = self->g(self->args);
+    constraint_value = self->g(self->pointset[row]);
     if(constraint_value > 0.0){
         if(constraint_value > self->maxcv) self->maxcv = constraint_value;
-        self->pointset[row][0] = big + constraint_value;
+        self->objs[row] = big + constraint_value;
     }
 }
 
@@ -191,10 +187,10 @@ void leapfrog(leapfrog_data* self)
 * the worst by "leapfrogging" over the point corresponding to the
 * 'best' index.
 */
-    double b1,b2;
-    for(size_t j = 1; j < self->xlen; j++){
+    double b1, b2;
+    for(size_t j = 0; j < self->xlen; j++){
         b1 = self->pointset[self->besti][j];
-        b2 = self->pointset[self->besti][j] * 2.0 -\
+        b2 = 2.0 * self->pointset[self->besti][j] -\
             self->pointset[self->worsti][j];
         if(b2 < b1){
             b1 = b1 + b2;
@@ -205,9 +201,8 @@ void leapfrog(leapfrog_data* self)
         if(b2 > self->upper[j]) b2 = self->upper[j];
         self->pointset[self->worsti][j] = uniform(b1, b2);
         enforce_discrete(self, self->worsti, j);
-        self->args[j-1] = self->pointset[self->worsti][j];
     }
-    self->pointset[self->worsti][0] = self->f(self->args);
+    self->objs[self->worsti] = self->f(self->pointset[self->worsti]);
     enforce_constraints(self, self->worsti);
 }
 
@@ -222,30 +217,27 @@ void calculate_convergence(leapfrog_data* self)
 * convergence value is taken as the error of the optimization
 * and once the error <= tolerance the optimization ends.
 */
-    double obj_best = self->pointset[self->besti][0];
-    double obj_worst = self->pointset[self->worsti][0];
+    double obj_best = self->objs[self->besti];
+    double obj_worst = self->objs[self->worsti];
     double norm1, err_obj, dist_sum = 0.0, constraint_penalty = 0.0;
 
     if(fabs(obj_best) < self->tol) norm1 = self->tol;
     else norm1 = obj_best;
     err_obj = fabs((obj_worst - obj_best)/norm1);
     for(size_t i = 0; i < self->points; i++){
-        for(size_t j = 1; j < self->xlen + 1; j++){
-            self->args[j-1] = self->pointset[i][j];
-        }
-        if(self->g && self->g(self->args) > 0.0){
+        if(self->g && self->g(self->pointset[i]) > 0.0){
             constraint_penalty = 2.0 * self->tol;
         }
-        for(size_t j = 1; j < self->xlen + 1; j++){
+        for(size_t j = 0; j < self->xlen; j++){
             if(fabs(self->pointset[self->besti][j]) < self->tol){
                 norm1 = self->tol;
             }
             else norm1 = self->pointset[self->besti][j];
             dist_sum += fabs(
-                (self->pointset[self->besti][j] - self->args[j-1])/norm1);
+                (self->pointset[self->besti][j] - self->pointset[i][j])/norm1);
         }
     }
-    log_info("\nERRS: obj: %f dst: %f", err_obj, dist_sum);
+    // log_info("\nERRS: obj: %f dst: %f", err_obj, dist_sum);
     self->error = err_obj + dist_sum + constraint_penalty;
 }
 
@@ -256,7 +248,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
                             size_t discretelen, double tol)
 {
 /**
-* Allocates memory for and initalizes the main leapfrog_data struct
+* Allocates memory for and initializes the main leapfrog_data struct
 * to be used in the optimization.
 */
     leapfrog_data* self = (leapfrog_data*) malloc(sizeof(leapfrog_data));
@@ -264,6 +256,8 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     self->g = gptr;
     self->xlen = xlen;
     self->points = points;
+    self->pointset = zeros(points, self->xlen + 1);
+    self->objs = (double*) malloc(sizeof(double) * self->points);
     self->nfev = 0;
     self->maxcv = 0;
     self->besti = 0;
@@ -274,16 +268,13 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     self->discrete = discrete;
     self->discretelen = discretelen;
     self->tol = tol;
-    self->pointset = zeros(points, self->xlen + 1);
-    self->args = (double*) malloc(sizeof(double)*self->xlen);
 
     for(size_t i = 0; i < self->points; i++){
-        for(size_t j = 1; j < self->xlen + 1; j++){
-            self->pointset[i][j] = uniform(self->lower[j-1], self->upper[j-1]);
+        for(size_t j = 0; j < self->xlen; j++){
+            self->pointset[i][j] = uniform(self->lower[j], self->upper[j]);
             enforce_discrete(self, i, j);
-            self->args[j-1] = self->pointset[i][j];
         }
-        self->pointset[i][0] = self->f(self->args);
+        self->objs[i] = self->f(self->pointset[i]);
         self->nfev++;
     }
     for(size_t i = 0; i < self->points; i++){
@@ -317,30 +308,35 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
 * 'maxit'.
 */
     size_t iters;
-    double* best = (double*) malloc(sizeof(double)*(xlen+1));
+    double* best = (double*) malloc(sizeof(double)*(xlen));
 
     if(seedval) srand(seedval);
-    else {
-        size_t seed = time(0);
-        printf("seed = %lu\n", seed);
-        srand(seed);
-    }
+    else srand(time(0));
 
     leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points,
                                        gptr, discrete, discretelen, tol);
     for(iters = 0; iters < maxit; iters++) {
+        // // print point set data
+        // printf(" %lu %lu \n",
+        //     (long unsigned int)self->besti,
+        //     (long unsigned int)self->worsti);
+        // for (size_t row = 0; row < self->points; row++){
+        //     printf("\n%f ", self->objs[self->besti]);
+        //     for(size_t i = 0; i < self->xlen; i++){
+        //         printf("%f ",self->pointset[self->besti][i]);
+        //     }
+        //     printf("\n");
+        // }
+        // printf("Error: %f\n\n", self->error);
+        // // end print pointset data
         iterate(self);
-        printf(" %lu %lu ", self->besti, self->worsti);
-        for(size_t i = 0; i < self->xlen + 1; i++){
-            printf("%f ",self->pointset[self->worsti][i]);
-        }
-        printf("Error: %f\n", self->error);
         if(self->error < tol){
             break;
         }
+
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
-    cpy_data(self->pointset[self->besti], best, xlen+1);
+    cpy_data(self->pointset[self->besti], best, xlen);
     free_data(self);
     return best;
 }
