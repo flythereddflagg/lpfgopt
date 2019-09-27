@@ -10,24 +10,31 @@ endif
 
 CC = gcc
 CFLAGS = -g -Wall -std=c99
+DLLFLAGS = -shared -fPIC
 
 SRC = lpfgopt main
 OUT = out.exe
 EXTRA = -I./include
+EXE = -D OUT_EXE
 
 all:
-	$(CC) $(CFLAGS) $(foreach var,$(SRC), ./csrc/$(var).c) -o $(OUT) $(EXTRA)
+	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/lpfgopt.c -o  leapfrog$(DLL) $(EXTRA)
 
+
+.PHONY: ctest
+ctest:
+	$(CC) $(CFLAGS) $(foreach var,$(SRC), ./csrc/$(var).c)\
+	-o $(OUT) $(EXTRA) $(EXE)
 
 .PHONY: clean-linux
 clean-linux:
-	rm -f *.o *.exe *.so *.dll
+	rm -f ./obj/*.o *.exe *.so *.dll
 
 .PHONY: clean-windows
 clean-windows:
 	del *.exe
 	del *.dll
-	del *.o
+	del .\obj\*.o
 	del *.so
 
 

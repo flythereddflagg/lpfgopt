@@ -1,9 +1,10 @@
 #include "dbg.h"
-#include "lpfgopt.h"
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 #include <stdio.h>
+
+#include "lpfgopt.h"
 
 
 typedef struct {
