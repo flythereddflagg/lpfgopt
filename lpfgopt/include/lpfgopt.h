@@ -29,40 +29,15 @@ extern "C"
 {
 #endif
 
-// #ifdef PY_EXPORTS
-// // Py Exports from the following URL:
-// // http://stackoverflow.com/questions/15160077/assigning-python-function-to-ctypes-pointer-variable
-// // Setting up external function pointers from a python script.
-// #include "dbg.h"
-
-// typedef double (*FUNC)(double*);
-// LPFGOPTAPI FUNC pfunc;
-// LPFGOPTAPI void set(FUNC f)
-// {
-//     pfunc = f;
-// }
-
-// double func_ext(double* x)
-// {
-//     return pfunc(x);
-// }
-
-// LPFGOPTAPI double func_1(double* x)
-// {
-//     return func_ext(x);
-// }
-// #endif
-
 /* Declare our functions using the above definitions. */
 
-LPFGOPTAPI double* LPFGOPTCALL minimize(
-                double (*fptr)(double*), double* lower, double* upper, 
-                size_t xlen, size_t points, double (*gptr)(double*), 
-                size_t* discrete, size_t discretelen, size_t maxit, 
-                double tol, size_t seedval);
+LPFGOPTAPI void LPFGOPTCALL minimize(
+                double (*fptr)(double*), double* lower, double* upper,
+                size_t xlen, size_t points, double (*gptr)(double*),
+                size_t* discrete, size_t discretelen, size_t maxit,
+                double tol, size_t seedval, double* best);
 
 #ifdef __cplusplus
-} // __cplusplus defined.
+}
 #endif
-
 #endif

@@ -1,10 +1,10 @@
-#include "dbg.h"
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 #include <stdio.h>
 
 #include "lpfgopt.h"
+#include "dbg.h"
 
 
 typedef struct {
@@ -16,9 +16,8 @@ typedef struct {
 
     double* lower;          // the lower bounds; length = xlen
     double* upper;          // the upper bounds; length = xlen
+    double** pointset;      // point set shape = (points, xlen)
     double* objs;           // the objective function values; length = points
-    double** pointset;      // the points corresponding with objective
-                            // function values; shape = (points, xlen)
 
     size_t* discrete;       // array of discrete indices
     size_t discretelen;     // length of discrete
@@ -204,6 +203,7 @@ void leapfrog(leapfrog_data* self)
         enforce_discrete(self, self->worsti, j);
     }
     self->objs[self->worsti] = self->f(self->pointset[self->worsti]);
+    self->nfev++;
     enforce_constraints(self, self->worsti);
 }
 
@@ -260,7 +260,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     self->pointset = zeros(points, self->xlen + 1);
     self->objs = (double*) malloc(sizeof(double) * self->points);
     self->nfev = 0;
-    self->maxcv = 0;
+    self->maxcv = 0.0;
     self->besti = 0;
     self->worsti = 0;
     self->error = 100.0;
@@ -297,11 +297,11 @@ void iterate(leapfrog_data* self)
 }
 
 
-LPFGOPTAPI double* LPFGOPTCALL minimize(
+LPFGOPTAPI void LPFGOPTCALL minimize(
                 double (*fptr)(double*), double* lower, double* upper,
                 size_t xlen, size_t points, double (*gptr)(double*),
                 size_t* discrete, size_t discretelen, size_t maxit,
-                double tol, size_t seedval)
+                double tol, size_t seedval, double* best)
 {
 /**
 * Minimizes a function until the convergence criteria are
@@ -309,7 +309,6 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
 * 'maxit'.
 */
     size_t iters;
-    double* best = (double*) malloc(sizeof(double)*(xlen));
 
     if(seedval) srand(seedval);
     else srand(time(0));
@@ -317,27 +316,18 @@ LPFGOPTAPI double* LPFGOPTCALL minimize(
     leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points,
                                        gptr, discrete, discretelen, tol);
     for(iters = 0; iters < maxit; iters++) {
-        // // print point set data
-        // printf(" %lu %lu \n",
-        //     (long unsigned int)self->besti,
-        //     (long unsigned int)self->worsti);
-        // for (size_t row = 0; row < self->points; row++){
-        //     printf("\n%f ", self->objs[self->besti]);
-        //     for(size_t i = 0; i < self->xlen; i++){
-        //         printf("%f ",self->pointset[self->besti][i]);
-        //     }
-        //     printf("\n");
-        // }
-        // printf("Error: %f\n\n", self->error);
-        // // end print pointset data
         iterate(self);
         if(self->error < tol){
             break;
         }
-
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
     cpy_data(self->pointset[self->besti], best, xlen);
+    best[xlen] = self->objs[self->besti];
+    best[xlen + 1] = iters >= maxit ? 1.0 : 0.0;
+    best[xlen + 2] = self->nfev;
+    best[xlen + 3] = iters + 1;
+    best[xlen + 4] = self->maxcv;
+
     free_data(self);
-    return best;
 }

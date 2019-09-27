@@ -24,7 +24,7 @@ all:
 .PHONY: ctest
 ctest:
 	$(CC) $(CFLAGS) $(foreach var,$(SRC), ./csrc/$(var).c)\
-	-o $(OUT) $(EXTRA) $(EXE)
+	 -o $(OUT) $(EXTRA) $(EXE)
 
 .PHONY: clean-linux
 clean-linux:
