@@ -8,7 +8,7 @@ def minimize(fun,
             fconstraint=None,
             discrete=[],
             maxit=10000,
-            tol=1e-3,
+            tol=1e-5,
             seedval=None,
             pointset=None,
             callback=None,
@@ -63,11 +63,17 @@ def minimize(fun,
     output = list(c_output)
     return {
         'x' : output[:xlen],
-        'obj' : output[xlen],
-        'status' : output[xlen + 1],
-        'nfev' : output[xlen + 2],
-        'iters' : output[xlen + 3],
-        'maxcv' : output[xlen + 4]
+        'fun' : output[xlen],
+        'status' : int(output[xlen + 1]),
+        'nfev' : int(output[xlen + 2]),
+        'nit' : int(output[xlen + 3]),
+        'maxcv' : output[xlen + 4],
+        "success" : True,
+        "message" : "",
+        "best" : [],
+        "worst" : [],
+        "final_error" : 0.0,
+        "pointset" : []
     }
 
 

@@ -1,5 +1,6 @@
 from __future__ import print_function
 from lpfgopt.leapfrog import LeapFrog
+from lpfgopt.c_leapfrog import minimize as c_minimize
 
 # get version of lpfgopt
 import os
