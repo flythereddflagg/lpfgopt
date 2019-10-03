@@ -14,7 +14,7 @@ DLLFLAGS = -shared -fPIC
 
 SRC = lpfgopt main
 OUT = out.exe
-EXTRA = -I./include
+EXTRA = -I./include -DSUPPRESS_MSG
 EXE = -D OUT_EXE
 
 all:

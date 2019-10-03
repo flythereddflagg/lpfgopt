@@ -326,7 +326,7 @@ LPFGOPTAPI void LPFGOPTCALL minimize(
     best[xlen] = self->objs[self->besti];
     best[xlen + 1] = iters >= maxit ? 1.0 : 0.0;
     best[xlen + 2] = self->nfev;
-    best[xlen + 3] = iters + 1;
+    best[xlen + 3] = iters;
     best[xlen + 4] = self->maxcv;
 
     free_data(self);

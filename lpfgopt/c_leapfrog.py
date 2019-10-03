@@ -8,7 +8,7 @@ def minimize(fun,
             fconstraint=None,
             discrete=[],
             maxit=10000,
-            tol=1e-5,
+            tol=1e-3,
             seedval=None,
             pointset=None,
             callback=None,
@@ -16,7 +16,7 @@ def minimize(fun,
     """
     Loads the compiled shared library named "leapfrog.dll" or
     "leapfrog.so" (depending on the operating system), runs
-    the FORTRAN "leapfrog" subroutine and returns the results.
+    the "leapfrog" function and returns the results.
     """
 
     root = os.path.dirname(os.path.abspath(__file__))
@@ -26,15 +26,19 @@ def minimize(fun,
         filename = root + "/leapfrog.so"
 
     cdll = ctypes.cdll.LoadLibrary(filename)
-
+    xlen = len(bounds)
     def f(x):
-        return fun(x, *args)
+        return fun([x[i] for i in range(xlen)], *args)
+
+    def g(x):
+        if fconstraint is None: return
+        return fconstraint([x[i] for i in range(xlen)])
 
     prototype = ctypes.CFUNCTYPE(ctypes.c_double,
                                 ctypes.POINTER(ctypes.c_double))
     fptr = prototype(f)
     if fconstraint is not None:
-        gptr = prototype(fconstraint)
+        gptr = prototype(g)
     else:
         gptr = ctypes.POINTER(ctypes.c_double)()
 
@@ -47,7 +51,6 @@ def minimize(fun,
     upper = [i[1] for i in bounds]
     lowerp = (ctypes.c_double * len(lower))(*lower)
     upperp = (ctypes.c_double * len(upper))(*upper)
-    xlen = len(lower)
     cxlen = ctypes.c_size_t(xlen)
     cpoints = ctypes.c_size_t(points)
     cdiscrete = (ctypes.c_size_t * len(discrete))(*discrete)
@@ -69,7 +72,9 @@ def minimize(fun,
         'nit' : int(output[xlen + 3]),
         'maxcv' : output[xlen + 4],
         "success" : True,
-        "message" : "",
+        "message" : "Optmization completed successfully" \
+            if int(output[xlen + 1]) == 0 else \
+            "Maxiumum iterations exceeded",
         "best" : [],
         "worst" : [],
         "final_error" : 0.0,
