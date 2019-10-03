@@ -5,23 +5,23 @@ author         : Mark Redd
 email          : redddogjr@gmail.com
 
 about:
-    Contains discrete optimization benchmark tests for the 
-    LeapFrog Optimizer. Designed to be used with the 'nose' module. Tests are 
-    tuned individually to find a single optimum and are taken from the 
+    Contains discrete optimization benchmark tests for the
+    LeapFrog Optimizer. Designed to be used with the 'nose' module. Tests are
+    tuned individually to find a single optimum and are taken from the
     following wikipedia article:
 
         https://en.wikipedia.org/wiki/Test_functions_for_optimization
-    
+
     The results of each test may be run individually by importing this module
     running the desired test.
-    
-    Performance is measured by the optimizer successfully finding the optimum 
+
+    Performance is measured by the optimizer successfully finding the optimum
     x vector of each test function to within 0.1% of the real optimum or better.
-    In cases where the optimum x vector would be 0.0 the optimizer must find 
+    In cases where the optimum x vector would be 0.0 the optimizer must find
     a value where:
-    
+
         x_i <= 0.001
-    
+
 """
 
 import numpy as np
@@ -34,10 +34,10 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
     failing result for nosetests on a failure.
     '''
     sol = minimize(f, bounds, **options)
-    
+
     r = "Correct opt"
     print(f"{r:12} : {check}\n")
-    
+
     for key, value in sol.items():
         if key == "pointset": continue
         print(f"{key:12} : {value}")
@@ -46,7 +46,7 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
         print(i)
 
     assert sol['success'], "Optimization Failed"
-    
+
     for i in range(len(check)):
         if abs(check[i]) < tol:
             norm = 1.0
@@ -54,10 +54,10 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
             norm = check[i]
         err = abs((check[i] - sol['x'][i])/norm)
         assert err <= tol, f"Failed on parameter index {i} with error {err}"
-    
+
     if output:
         raise Exception("Generic Exception")
-        
+
 
 
 def test_rosenbrock_discrete_test():
@@ -67,42 +67,45 @@ def test_rosenbrock_discrete_test():
     # adjust limits to improve optimization for large domains
     g = lambda x: x[0]**2 + x[1]**2 - 2
     options = {
+        "points"      : 50,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         "fconstraint" : g,
         "discrete"    : [0,1]
         }
-        
+
     f = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
-    
+
     bounds = [
         [-11.0, 11.0],
         [-11.0, 11.0]]
-        
+
     check = [1.0, 1.0]
-    
+
     run(f, bounds, check, options)
-    
-    
-    
+
+
+
 def test_sphere_constr_test():
     """
     Constrained sphere function benchmark
     """
-    g = lambda x: -x[0]**2 + 10 - x[1] 
+    # adjusted this FIX?
+    g = lambda x: -x[0]**2 + 10 - x[1]
     options = {
+        "points"      : 100,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         "fconstraint" : g,
         "discrete"    : [0]
         }
-      
+
     f = lambda x: sum([i**2 for i in x])
-    
+
     bounds = [
-        [-20.0, 20.0],
-        [-20.0, 20.0]]
-    
+        [-10.0, 3.0],
+        [-10.0, 10.0]]
+
     check = [-3, 1.0]
-    
+
     run(f, bounds, check, options)

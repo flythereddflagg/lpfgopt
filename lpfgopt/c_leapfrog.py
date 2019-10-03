@@ -58,27 +58,27 @@ def minimize(fun,
     cmaxit = ctypes.c_size_t(maxit)
     ctol = ctypes.c_double(tol)
 
-    c_output = (ctypes.c_double * (len(lower)+5))(*[0.0 for i in range(len(lower)+5)])
+    c_output = (ctypes.c_double * (len(lower)+6))(*[0.0 for i in range(len(lower)+6)])
 
     cdll.minimize(fptr, lowerp, upperp, cxlen, cpoints, gptr, cdiscrete,
                   discretelen, cmaxit, ctol, cseedval, c_output)
 
     output = list(c_output)
     return {
-        'x' : output[:xlen],
-        'fun' : output[xlen],
-        'status' : int(output[xlen + 1]),
-        'nfev' : int(output[xlen + 2]),
-        'nit' : int(output[xlen + 3]),
-        'maxcv' : output[xlen + 4],
-        "success" : True,
-        "message" : "Optmization completed successfully" \
-            if int(output[xlen + 1]) == 0 else \
-            "Maxiumum iterations exceeded",
-        "best" : [],
-        "worst" : [],
-        "final_error" : 0.0,
-        "pointset" : []
+        'x'             : output[:xlen],
+        'fun'           : output[xlen],
+        'status'        : int(output[xlen + 1]),
+        'nfev'          : int(output[xlen + 2]),
+        'nit'           : int(output[xlen + 3]),
+        'maxcv'         : output[xlen + 4],
+        "success"       : True if int(output[xlen + 1]) == 0 else False,
+        "message"       : "Optimization completed successfully" \
+                            if int(output[xlen + 1]) == 0 else \
+                            "Maximum iterations exceeded",
+        "best"          : [],
+        "worst"         : [],
+        "final_error"   : output[xlen + 5],
+        "pointset"      : []
     }
 
 

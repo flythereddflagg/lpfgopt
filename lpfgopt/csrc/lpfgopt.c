@@ -29,6 +29,7 @@ typedef struct {
     size_t worsti;          // the index of the worst point
     double error;           // the value of the convergence error
     double tol;             // convergence tolerance
+    double big;             // punishing number. A big, positive number.
 
 } leapfrog_data;
 
@@ -164,11 +165,9 @@ void enforce_constraints(leapfrog_data* self, size_t row)
 * is feasible.
 */
     if(!self->g) return;
-    double big = self->pointset[0][0];
-    double mbig;
-    double constraint_value;
+    double big = 0.0, mbig, constraint_value;
     for(size_t i = 0; i < self->points; i++){
-        mbig = fabs(self->pointset[i][0]);
+        mbig = fabs(self->objs[i]);
         if(mbig > big) big = mbig;
     }
     constraint_value = self->g(self->pointset[row]);
@@ -278,6 +277,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
         self->objs[i] = self->f(self->pointset[i]);
         self->nfev++;
     }
+    eval_best_worst(self);
     for(size_t i = 0; i < self->points; i++){
         enforce_constraints(self, i);
     }
@@ -307,6 +307,22 @@ LPFGOPTAPI void LPFGOPTCALL minimize(
 * Minimizes a function until the convergence criteria are
 * satisfied or the number of iterations exceeds
 * 'maxit'.
+* output is copied to "best" which is a double array of length = xlen + 6
+* where the outputs are (in order):
+*  - best[0], best[1] ... best[xlen - 1]: the optimized inputs
+*  - best[xlen]: the objective function value at those inputs
+*  - best[xlen + 1]: a status code indicating the success or error of the
+*       optimization. Values are:
+*           0 : optimization completed successfully
+*           1 : the maximum number of iterations was exceeded
+*  - best[xlen + 2]: the number of function evaluations in the optimization
+*       (value should be a whole number > 0 and <= maxit + points)
+*  - best[xlen + 3]: the number of iterations (value should be a
+*       whole number > 0 and <= maxit)
+*  - best[xlen + 4]: the maximum constraint violation that occurred during
+*       the optimization. If the function pointer is NULL then it is
+*       set to 0.0
+*   - best[xlen + 5]: the final error of the optimization
 */
     size_t iters;
 
@@ -328,6 +344,7 @@ LPFGOPTAPI void LPFGOPTCALL minimize(
     best[xlen + 2] = self->nfev;
     best[xlen + 3] = iters;
     best[xlen + 4] = self->maxcv;
+    best[xlen + 5] = self->error;
 
     free_data(self);
 }
