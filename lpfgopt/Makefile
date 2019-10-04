@@ -9,6 +9,8 @@ else
 endif
 
 CC = gcc
+CPP = g++
+CPPFLAGS = -g -Wall
 CFLAGS = -g -Wall -std=c99
 DLLFLAGS = -shared -fPIC
 
@@ -25,6 +27,12 @@ all:
 ctest:
 	$(CC) $(CFLAGS) $(foreach var,$(SRC), ./csrc/$(var).c)\
 	 -o $(OUT) $(EXTRA) $(EXE)
+
+
+.PHONY: cpptest
+cpptest: all
+	$(CPP) $(CPPFLAGS) ./csrc/use_dll.cpp -o $(OUT) -ldl
+
 
 .PHONY: clean-linux
 clean-linux:
