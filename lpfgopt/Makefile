@@ -3,9 +3,11 @@
 ifeq ($(OS), Windows_NT)
 	CLEANER = clean-windows
 	DLL = .dll
+	LDL = 
 else
 	CLEANER = clean-linux
 	DLL = .so
+	LDL = -ldl
 endif
 
 CC = gcc
@@ -31,7 +33,7 @@ ctest:
 
 .PHONY: cpptest
 cpptest: all
-	$(CPP) $(CPPFLAGS) ./csrc/use_dll.cpp -o $(OUT) -ldl
+	$(CPP) $(CPPFLAGS) ./csrc/use_dll.cpp -o $(OUT) $(LDL)
 
 
 .PHONY: clean-linux

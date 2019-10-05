@@ -1,6 +1,10 @@
 #include <iostream>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <dlfcn.h>
+#endif
 
-#include <dlfcn.h>
 
 using namespace std;
 
@@ -16,15 +20,28 @@ double g(double* x)
 
 int main(void)
 {
-    void *handle;
-    handle = dlopen("./leapfrog.dll", RTLD_NOW);
-    if(!handle){
-        cout << "ERROR! (1)\n";
-    }
     typedef void ext_func(double (*)(double*), double*, double*,
                 size_t, size_t, double (*)(double*), size_t*,
                 size_t, size_t, double, size_t, double*);
+
+#ifdef _WIN32
+    HINSTANCE handle;  
+    handle = LoadLibrary(TEXT("./leapfrog.dll")); 
+#else
+    void *handle;
+    handle = dlopen("./leapfrog.so", RTLD_NOW);
+#endif  
+ 
+    if(!handle){
+        cout << "ERROR! (1)\n";
+        return -1;
+    }
+
+#ifdef _WIN32
+    ext_func* minimize = (ext_func*) GetProcAddress(handle, "minimize");
+#else
     ext_func* minimize = (ext_func*) dlsym(handle, "minimize");
+#endif
 
     size_t i;
     size_t xlen = 2;
@@ -48,14 +65,22 @@ int main(void)
              1e5, 1e-3, 1569433771, best);
 
 
-    for(i = 0; i < xlen; i++){
+    for(i = 0; i < xlen+6; i++){
         printf("%f ", best[i]);
     }
     printf("\n");
 
+    delete[] best;
+    delete[] discrete;
     delete[] lower;
     delete[] upper;
-    delete[] best;
+    
+
+#ifdef _WIN32
+    FreeLibrary(handle); 
+#else
     dlclose(handle);
+#endif
+    
     return 0;
 }

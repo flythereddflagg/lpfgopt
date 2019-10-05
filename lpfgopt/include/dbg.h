@@ -5,16 +5,15 @@ Annotated by Mark Redd
 
 #ifndef __dbg_h__
 #define __dbg_h__
-#ifndef SUPPRESS_MSG
 
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 
-#define err_out(B, M, ...) fprintf(B, M, ...)
-
+#ifndef SUPPRESS_MSG
+    #define err_out fprintf
 #else 
-#define err_out(B, M, ...)
+    #define err_out(B, M, ...)
 #endif
 
 #ifdef NDEBUG

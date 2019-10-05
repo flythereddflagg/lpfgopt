@@ -3,8 +3,8 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "lpfgopt.h"
 #include "dbg.h"
+//#include "lpfgopt.h"
 
 
 typedef struct {
@@ -47,18 +47,6 @@ double uniform(double lower, double upper)
 
 error:
     return 0.0;
-}
-
-
-void cpy_data(double* src, double* dest, size_t len)
-{
-/**
-* copies an array of length @param len from
-* @param src to @param dest.
-*/
-    for(size_t i = 0; i < len; i++){
-        dest[i] = src[i];
-    }
 }
 
 
@@ -269,6 +257,12 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     self->discretelen = discretelen;
     self->tol = tol;
 
+    if(discrete){
+        for(size_t i = 0; i < discretelen; i++){
+            self->lower[self->discrete[i]] = \
+                ((double)(int)self->lower[self->discrete[i]]) +  0.999;
+        }
+    }
     for(size_t i = 0; i < self->points; i++){
         for(size_t j = 0; j < self->xlen; j++){
             self->pointset[i][j] = uniform(self->lower[j], self->upper[j]);
@@ -297,7 +291,8 @@ void iterate(leapfrog_data* self)
 }
 
 
-WINAPI void WINCALL minimize(
+//WINAPI void WINCALL minimize(
+void minimize(
                 double (*fptr)(double*), double* lower, double* upper,
                 size_t xlen, size_t points, double (*gptr)(double*),
                 size_t* discrete, size_t discretelen, size_t maxit,
@@ -307,6 +302,33 @@ WINAPI void WINCALL minimize(
 * Minimizes a function until the convergence criteria are
 * satisfied or the number of iterations exceeds
 * 'maxit'.
+*  The LeapFrog object constructor takes the following parameters:
+*       - fptr        : pointer to objective function with signature 
+*                       double fptr(double*)
+*       - lower       : variable lower bounds
+*       - upper       : variable upper bounds
+*       - xlen        : number of variables, should correspond to the lengths
+*                       of lower, upper and the array passed into fptr
+*       - points      : point set size
+*       - gptr        : pointer to the constraint function with signature
+*                       double gptr(double*). Must return a value <= 0.0 when
+*                       all constraints are satisfied. gptr returning a value
+*                       > 0.0 will make the optimizer punish that point.
+*                       NULL may be passed in to indicate unconstrained 
+*                       optimization
+*       - discrete    : size_t array of indices that correspond to 
+*                       discrete variables. These variables
+*                       will be constrained to integer values
+*                       by truncating any randomly generated
+*                       number (i.e. rounding down to the 
+*                       nearest integer absolute value)
+*                       bounds are automatically adjusted to ensure 
+*                       the bounded space remains the same
+*       - maxit       : maximum iterations
+*       - tol         : convergence tolerance
+*       - seedval     : random seed
+*       - pointset    : starting point set
+        - callback    : function to be called after each iteration
 * output is copied to "best" which is a double array of length = xlen + 6
 * where the outputs are (in order):
 *  - best[0], best[1] ... best[xlen - 1]: the optimized inputs
@@ -338,11 +360,14 @@ WINAPI void WINCALL minimize(
         }
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
-    cpy_data(self->pointset[self->besti], best, xlen);
+    
+    for(size_t i = 0; i < self->xlen; i++){
+        best[i] = self->pointset[self->besti][i];
+    }
     best[xlen] = self->objs[self->besti];
     best[xlen + 1] = iters >= maxit ? 1.0 : 0.0;
     best[xlen + 2] = self->nfev;
-    best[xlen + 3] = iters;
+    best[xlen + 3] = iters >= maxit ? iters : iters + 1;
     best[xlen + 4] = self->maxcv;
     best[xlen + 5] = self->error;
 
