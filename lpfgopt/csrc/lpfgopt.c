@@ -297,7 +297,7 @@ void iterate(leapfrog_data* self)
 }
 
 
-LPFGOPTAPI void LPFGOPTCALL minimize(
+WINAPI void WINCALL minimize(
                 double (*fptr)(double*), double* lower, double* upper,
                 size_t xlen, size_t points, double (*gptr)(double*),
                 size_t* discrete, size_t discretelen, size_t maxit,

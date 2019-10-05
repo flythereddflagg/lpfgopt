@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <dlfcn.h>
 
 using namespace std;
@@ -23,7 +24,7 @@ int main(void)
     typedef void ext_func(double (*)(double*), double*, double*,
                 size_t, size_t, double (*)(double*), size_t*,
                 size_t, size_t, double, size_t, double*);
-    ext_func* aitwhs = (ext_func*) dlsym(handle, "minimize");
+    ext_func* minimize = (ext_func*) dlsym(handle, "minimize");
 
     size_t i;
     size_t xlen = 2;
