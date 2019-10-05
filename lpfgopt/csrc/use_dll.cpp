@@ -1,8 +1,15 @@
 #include <iostream>
 #ifdef _WIN32
     #include <windows.h>
+    #define RTLD_NOW
+    #define dlopen(path, mode) LoadLibrary(TEXT(path))
+    #define DLL_PATH "./leapfrog.dll"
+    #define dlsym GetProcAddress
+    #define dlclose FreeLibrary
 #else
     #include <dlfcn.h>
+    #define HINSTANCE void*
+    #define DLL_PATH "./leapfrog.so"
 #endif
 
 
@@ -24,24 +31,14 @@ int main(void)
                 size_t, size_t, double (*)(double*), size_t*,
                 size_t, size_t, double, size_t, double*);
 
-#ifdef _WIN32
-    HINSTANCE handle;  
-    handle = LoadLibrary(TEXT("./leapfrog.dll")); 
-#else
-    void *handle;
-    handle = dlopen("./leapfrog.so", RTLD_NOW);
-#endif  
+    HINSTANCE handle = dlopen(DLL_PATH, RTLD_NOW); 
  
     if(!handle){
         cout << "ERROR! (1)\n";
         return -1;
     }
 
-#ifdef _WIN32
-    ext_func* minimize = (ext_func*) GetProcAddress(handle, "minimize");
-#else
     ext_func* minimize = (ext_func*) dlsym(handle, "minimize");
-#endif
 
     size_t i;
     size_t xlen = 2;
@@ -74,13 +71,8 @@ int main(void)
     delete[] discrete;
     delete[] lower;
     delete[] upper;
-    
 
-#ifdef _WIN32
-    FreeLibrary(handle); 
-#else
     dlclose(handle);
-#endif
-    
+
     return 0;
 }
