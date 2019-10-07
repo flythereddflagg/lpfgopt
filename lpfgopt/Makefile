@@ -3,7 +3,7 @@
 ifeq ($(OS), Windows_NT)
 	CLEANER = clean-windows
 	DLL = .dll
-	LDL = 
+	LDL =
 else
 	CLEANER = clean-linux
 	DLL = .so
@@ -16,13 +16,13 @@ CPPFLAGS = -g -Wall
 CFLAGS = -g -Wall -std=c99
 DLLFLAGS = -shared -fPIC
 
-SRC = lpfgopt main
+SRC = leapfrog use_lib
 OUT = out.exe
-EXTRA = -I./include -DSUPPRESS_MSG
+EXTRA = -I./include
 EXE = -D OUT_EXE
 
 all:
-	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/lpfgopt.c -o  leapfrog$(DLL) $(EXTRA)
+	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/leapfrog.c -o leapfrog$(DLL) $(EXTRA)
 
 
 .PHONY: ctest
@@ -38,13 +38,12 @@ cpptest: all
 
 .PHONY: clean-linux
 clean-linux:
-	rm -f ./obj/*.o *.exe *.so *.dll
+	rm -f *.exe *.so *.dll
 
 .PHONY: clean-windows
 clean-windows:
 	del *.exe
 	del *.dll
-	del .\obj\*.o
 	del *.so
 
 

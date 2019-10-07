@@ -1,17 +1,8 @@
 import ctypes
 import os
 
-def minimize(fun,
-            bounds,
-            args=(),
-            points=20,
-            fconstraint=None,
-            discrete=[],
-            maxit=10000,
-            tol=1e-3,
-            seedval=None,
-            pointset=None,
-            callback=None,
+def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
+             maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None,
             **kwargs):
     """
     Loads the compiled shared library named "leapfrog.dll" or
@@ -34,6 +25,10 @@ def minimize(fun,
         if fconstraint is None: return
         return fconstraint([x[i] for i in range(xlen)])
 
+    def cb(x):
+        if callback is None: return
+        return callback([x[i] for i in range(xlen)])
+
     prototype = ctypes.CFUNCTYPE(ctypes.c_double,
                                 ctypes.POINTER(ctypes.c_double))
     fptr = prototype(f)
@@ -41,6 +36,13 @@ def minimize(fun,
         gptr = prototype(g)
     else:
         gptr = ctypes.POINTER(ctypes.c_double)()
+
+    if callback is not None:
+        pt = ctypes.CFUNCTYPE(ctypes.c_void_p,
+                              ctypes.POINTER(ctypes.c_double))
+        cbp = pt(cb)
+    else:
+        cbp = ctypes.POINTER(ctypes.c_void_p)()
 
     if seedval is not None:
         cseedval = ctypes.c_size_t(seedval)
@@ -58,10 +60,18 @@ def minimize(fun,
     cmaxit = ctypes.c_size_t(maxit)
     ctol = ctypes.c_double(tol)
 
-    c_output = (ctypes.c_double * (len(lower)+6))(*[0.0 for i in range(len(lower)+6)])
+    if pointset is None:
+        cpointset = ctypes.POINTER(ctypes.c_uint)()
+    else:
+        pointset_list = [(ctypes.c_double * xlen)(*row) for row in pointset]
+        cpointset = (ctypes.POINTER(ctypes.c_double) * points)(*pointset_list)
+
+    c_output = (ctypes.c_double * (len(lower)+6))(
+                *[0.0 for i in range(len(lower)+6)])
 
     cdll.minimize(fptr, lowerp, upperp, cxlen, cpoints, gptr, cdiscrete,
-                  discretelen, cmaxit, ctol, cseedval, c_output)
+                  discretelen, cmaxit, ctol, cseedval, cpointset, cbp,
+                  c_output)
 
     output = list(c_output)
     return {

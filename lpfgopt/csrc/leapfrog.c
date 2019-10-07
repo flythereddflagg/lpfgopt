@@ -1,11 +1,20 @@
+/**
+* File: leapfrog.c
+* Author: Mark Redd
+* Email: redddogjr@gmail.com
+* About:
+* Explanation of the file.
+*/
+
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include <stdio.h>
 
 #include "dbg.h"
-//#include "lpfgopt.h"
 
+#ifdef OUT_EXE
+    #include "leapfrog.h"
+#endif
 
 typedef struct {
 
@@ -230,10 +239,22 @@ void calculate_convergence(leapfrog_data* self)
 }
 
 
+void iterate(leapfrog_data* self)
+{
+/**
+* Completes one iteration of the leapfrog optimization algorithm.
+*/
+    leapfrog(self);
+    eval_best_worst(self);
+    calculate_convergence(self);
+}
+
+
 leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
                             double* upper, size_t xlen, size_t points,
                             double (*gptr)(double*), size_t* discrete,
-                            size_t discretelen, double tol)
+                            size_t discretelen, double tol,
+                            double** pointset)
 {
 /**
 * Allocates memory for and initializes the main leapfrog_data struct
@@ -265,7 +286,9 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     }
     for(size_t i = 0; i < self->points; i++){
         for(size_t j = 0; j < self->xlen; j++){
-            self->pointset[i][j] = uniform(self->lower[j], self->upper[j]);
+            if(!pointset)
+                self->pointset[i][j] = uniform(self->lower[j], self->upper[j]);
+            else self->pointset[i][j] = pointset[i][j];
             enforce_discrete(self, i, j);
         }
         self->objs[i] = self->f(self->pointset[i]);
@@ -280,30 +303,19 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
 }
 
 
-void iterate(leapfrog_data* self)
-{
-/**
-* Completes one iteration of the leapfrog optimization algorithm.
-*/
-    leapfrog(self);
-    eval_best_worst(self);
-    calculate_convergence(self);
-}
-
-
-//WINAPI void WINCALL minimize(
 void minimize(
                 double (*fptr)(double*), double* lower, double* upper,
                 size_t xlen, size_t points, double (*gptr)(double*),
                 size_t* discrete, size_t discretelen, size_t maxit,
-                double tol, size_t seedval, double* best)
+                double tol, size_t seedval, double** pointset,
+                void (*callback)(double*), double* best)
 {
 /**
 * Minimizes a function until the convergence criteria are
 * satisfied or the number of iterations exceeds
 * 'maxit'.
-*  The LeapFrog object constructor takes the following parameters:
-*       - fptr        : pointer to objective function with signature 
+*  The LeapFrog minimizer takes the following parameters:
+*       - fptr        : pointer to objective function with signature
 *                       double fptr(double*)
 *       - lower       : variable lower bounds
 *       - upper       : variable upper bounds
@@ -314,23 +326,28 @@ void minimize(
 *                       double gptr(double*). Must return a value <= 0.0 when
 *                       all constraints are satisfied. gptr returning a value
 *                       > 0.0 will make the optimizer punish that point.
-*                       NULL may be passed in to indicate unconstrained 
+*                       NULL may be passed in to indicate unconstrained
 *                       optimization
-*       - discrete    : size_t array of indices that correspond to 
+*       - discrete    : size_t array of indices that correspond to
 *                       discrete variables. These variables
 *                       will be constrained to integer values
 *                       by truncating any randomly generated
-*                       number (i.e. rounding down to the 
+*                       number (i.e. rounding down to the
 *                       nearest integer absolute value)
-*                       bounds are automatically adjusted to ensure 
+*                       bounds are automatically adjusted to ensure
 *                       the bounded space remains the same
 *       - maxit       : maximum iterations
 *       - tol         : convergence tolerance
 *       - seedval     : random seed
-*       - pointset    : starting point set
-        - callback    : function to be called after each iteration
-* output is copied to "best" which is a double array of length = xlen + 6
-* where the outputs are (in order):
+*       - pointset    : starting point set of shape (points, xlen)
+*       - callback    : function to be called after each iteration; has
+*                       signature: void callback(double*)
+*       - best        : double array of length = xlen + 6 to which output
+*                       is copied.
+*
+*      *** Optimization Results ***
+* Optimization output is copied to "best" which is a double array
+* of length = xlen + 6 where the elements are (in order):
 *  - best[0], best[1] ... best[xlen - 1]: the optimized inputs
 *  - best[xlen]: the objective function value at those inputs
 *  - best[xlen + 1]: a status code indicating the success or error of the
@@ -346,21 +363,26 @@ void minimize(
 *       set to 0.0
 *   - best[xlen + 5]: the final error of the optimization
 */
+
+/***************** SANITIZE INPUT ********************/
+/***************** END SANITIZE INPUT ****************/
     size_t iters;
 
     if(seedval) srand(seedval);
     else srand(time(0));
 
     leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points,
-                                       gptr, discrete, discretelen, tol);
+                                       gptr, discrete, discretelen, tol,
+                                       pointset);
     for(iters = 0; iters < maxit; iters++) {
         iterate(self);
         if(self->error < tol){
             break;
         }
+        if(callback) callback(self->pointset[self->besti]);
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
-    
+
     for(size_t i = 0; i < self->xlen; i++){
         best[i] = self->pointset[self->besti][i];
     }
@@ -372,4 +394,7 @@ void minimize(
     best[xlen + 5] = self->error;
 
     free_data(self);
+
+// error:
+//     if(self) free_data(self);
 }

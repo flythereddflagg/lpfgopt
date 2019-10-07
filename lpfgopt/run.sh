@@ -4,6 +4,6 @@ set -e
 
 clear
 make clean
-make
+make cpptest
 ./out.exe
 #valgrind ./out.exe

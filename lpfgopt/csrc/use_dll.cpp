@@ -6,9 +6,12 @@
     #define DLL_PATH "./leapfrog.dll"
     #define dlsym GetProcAddress
     #define dlclose FreeLibrary
+    #define dlerror GetLastError
+    #define ERR int
 #else
     #include <dlfcn.h>
     #define HINSTANCE void*
+    #define ERR char*
     #define DLL_PATH "./leapfrog.so"
 #endif
 
@@ -27,14 +30,16 @@ double g(double* x)
 
 int main(void)
 {
-    typedef void ext_func(double (*)(double*), double*, double*,
-                size_t, size_t, double (*)(double*), size_t*,
-                size_t, size_t, double, size_t, double*);
+    typedef void ext_func(
+                double (*)(double*), double*, double*, size_t,
+                size_t, double (*)(double*), size_t*, size_t,
+                size_t, double, size_t, double**,
+                void (*)(double*), double*);
 
-    HINSTANCE handle = dlopen(DLL_PATH, RTLD_NOW); 
- 
+    HINSTANCE handle = dlopen(DLL_PATH, RTLD_NOW);
+
     if(!handle){
-        cout << "ERROR! (1)\n";
+        cout << "ERROR! (1)\n" << (ERR) dlerror() << "\n";
         return -1;
     }
 
@@ -59,7 +64,7 @@ int main(void)
     }
 
     minimize(fptr, lower, upper, xlen, 20, gptr, discrete, discretelen,
-             1e5, 1e-3, 1569433771, best);
+             1e5, 1e-3, 1569434771, NULL, NULL, best);
 
 
     for(i = 0; i < xlen+6; i++){

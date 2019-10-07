@@ -1,7 +1,6 @@
-#include "dbg.h"
-#include "lpfgopt.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "leapfrog.h"
 
 double f(double* x)
 {
@@ -17,13 +16,13 @@ int main(int argc, char** argv)
 {
     size_t i;
     size_t xlen = 2;
-    double* lower = malloc(sizeof(double)*xlen);
-    double* upper = malloc(sizeof(double)*xlen);
+    double* lower = (double*)malloc(sizeof(double)*xlen);
+    double* upper = (double*)malloc(sizeof(double)*xlen);
     double (*fptr)(double* x) = &f;
     double (*gptr)(double* x) = &g;
     size_t discretelen = 2;
-    size_t* discrete = malloc(sizeof(size_t)*discretelen);
-    double* best = (double*) malloc(sizeof(double)*(xlen));
+    size_t* discrete = (size_t*)malloc(sizeof(size_t)*discretelen);
+    double* best = (double*)malloc(sizeof(double)*(xlen + 6));
 
     discrete[0] = 0;
     discrete[1] = 1;
@@ -34,17 +33,18 @@ int main(int argc, char** argv)
     }
 
     minimize(fptr, lower, upper, xlen, 20, gptr, discrete, discretelen,
-             1e5, 1e-3, 1569433771, best);
+             1e5, 1e-3, 1569434771, NULL, NULL, best);
 
 
-    for(i = 0; i < xlen; i++){
+    for(i = 0; i < xlen + 6; i++){
         printf("%f ", best[i]);
     }
     printf("\n");
 
+    free(best);
+    free(discrete);
     free(lower);
     free(upper);
-    free(best);
 
     return 0;
 }
