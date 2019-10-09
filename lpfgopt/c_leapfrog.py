@@ -1,9 +1,9 @@
 import ctypes
 import os
 
-def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
-             maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None,
-            **kwargs):
+def minimize(fun, bounds, args=(), points=20, fconstraint=None,
+            discrete=[], maxit=10000, tol=1e-5, seedval=None, 
+            pointset=None, callback=None, **kwargs):
     """
     Loads the compiled shared library named "leapfrog.dll" or
     "leapfrog.so" (depending on the operating system), runs
@@ -14,7 +14,7 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
     if os.name == 'nt':
         filename = root + "/leapfrog.dll"
     else:
-        filename = root + "/leapfrog.so"
+        filename = root + "/leapfrog_c.so"
 
     cdll = ctypes.cdll.LoadLibrary(filename)
     xlen = len(bounds)
@@ -101,7 +101,7 @@ def main():
 
     print("\nBest:")
     for key, value in best.items():
-        print(f"    {key:<6} : {value}")
+        print(f"    {key:<12} : {value}")
 
 
 if __name__ == "__main__":

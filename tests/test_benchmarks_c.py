@@ -70,7 +70,7 @@ def test_rastrigin():
     Rastrigin function benchmark
     """
     options = {
-        "points"      : 100,
+        "points"      : 200,
         "tol"         : 1e-3,
         "seedval"     : 48151622232,
         }
@@ -307,7 +307,7 @@ def test_himmelblau():
         [-5.0, 5.0],
         [-5.0, 5.0]]
     
-    check = [3.0, 2.0]
+    check = [-3.779310, -3.283186]
     
     run(f, bounds, check, options)
 
@@ -490,7 +490,7 @@ def test_schaffer4():
         [-100.0, 100.0],
         [-100.0, 100.0]]
         
-    check = [0.0, 1.25313]
+    check = [1.25313, 0.0]
     
     run(f, bounds, check, options)  
     

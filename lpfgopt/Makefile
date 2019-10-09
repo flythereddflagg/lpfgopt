@@ -6,7 +6,7 @@ ifeq ($(OS), Windows_NT)
 	LDL =
 else
 	CLEANER = clean-linux
-	DLL = .so
+	DLL = _c.so
 	LDL = -ldl
 endif
 

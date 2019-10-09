@@ -12,7 +12,7 @@
     #include <dlfcn.h>
     #define HINSTANCE void*
     #define ERR char*
-    #define DLL_PATH "./leapfrog.so"
+    #define DLL_PATH "./leapfrog_c.so"
 #endif
 
 

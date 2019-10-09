@@ -6,4 +6,4 @@ clear
 make clean
 make cpptest
 ./out.exe
-#valgrind ./out.exe
+valgrind ./out.exe

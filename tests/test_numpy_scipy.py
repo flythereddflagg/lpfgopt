@@ -31,7 +31,7 @@ options_c = {
     "fun"         : _f,
     "bounds"      : _intvls,
     "args"        : (),
-    "points"      : 10,
+    "points"      : 20,
     "fconstraint" : _g1,
     "discrete"    : np.array([0,1]),
     "maxit"       : 5000,

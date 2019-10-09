@@ -291,6 +291,7 @@ def test_himmelblau():
     Himmelblau's function benchmark
     """
     options = {
+        "points"      : 100,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         }

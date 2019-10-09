@@ -67,7 +67,7 @@ def test_rosenbrock_discrete_test():
     # adjust limits to improve optimization for large domains
     g = lambda x: x[0]**2 + x[1]**2 - 2
     options = {
-        "points"      : 50,
+        "points"      : 100,
         "tol"         : 1e-3,
         "seedval"     : 4815162342,
         "fconstraint" : g,
