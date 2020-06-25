@@ -109,6 +109,7 @@ Leap Frog Optimizer State:
 
 
 from random import seed, uniform
+from lpfgopt.opt_result import OptimizeResult
 
 class LeapFrog():
     """
@@ -359,40 +360,32 @@ Leap Frog Optimizer State:
         satisfied or the number of iterations exceeds 
         'self.maxit'.
         """
+        success, status, message = False, 1, "Maximum Iterations Exceeded"
         for iters in range(self.maxit):
             self.iterate()
             
             if self.error < self.tol:
-                return {
-                    "x"           : self.pointset[self.besti][1:],
-                    "success"     : True,
-                    "status"      : 0,
-                    "message"     : "Tolerance condition satisfied",
-                    "fun"         : self.pointset[self.besti][0],
-                    "nfev"        : self.nfev,
-                    "nit"         : self.total_iters,
-                    "maxcv"       : self.maxcv,
-                    "best"        : self.pointset[self.besti],
-                    "worst"       : self.pointset[self.worsti],
-                    "final_error" : self.error,
-                    "pointset"    : self.pointset}
+                success, status = True, 0, 
+                message  = "Tolerance condition satisfied"
+                break
 
             if self.callback is not None:
                 self.callback(self.pointset[self.besti][1:])
         
-        return {
-            "x"           : self.pointset[self.besti][1:],
-            "success"     : False,
-            "status"      : 1,
-            "message"     : "Maximum Iterations Exceeded",
-            "fun"         : self.pointset[self.besti][0],
-            "nfev"        : self.nfev,
-            "nit"         : self.total_iters,
-            "maxcv"       : self.maxcv,
-            "best"        : self.pointset[self.besti],
-            "worst"       : self.pointset[self.worsti],
-            "final_error" : self.error,
-            "pointset"    : self.pointset}
+        return OptimizeResult(
+            x           = self.pointset[self.besti][1:],
+            success     = success,
+            status      = status,
+            message     = message,
+            fun         = self.pointset[self.besti][0],
+            nfev        = self.nfev,
+            nit         = self.total_iters,
+            maxcv       = self.maxcv,
+            best        = self.pointset[self.besti],
+            worst       = self.pointset[self.worsti],
+            final_error = self.error,
+            pointset    = self.pointset
+        )
 
 
     

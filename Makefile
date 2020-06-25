@@ -13,7 +13,7 @@ endif
 CC = gcc
 CPP = g++
 CPPFLAGS = -g -Wall
-CFLAGS = -g -Wall -std=c99
+CFLAGS = -g -Wall -std=c11
 DLLFLAGS = -shared -fPIC
 
 SRC = leapfrog use_lib
@@ -21,31 +21,24 @@ OUT = out.exe
 EXTRA = -I./include
 EXE = -D OUT_EXE
 
+.PHONY: ctest cpptest clean-linux clean-windows clean
+
 all:
-	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/leapfrog.c -o leapfrog$(DLL) $(EXTRA)
+	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/leapfrog.c -o ./lpfgopt/leapfrog$(DLL) $(EXTRA)
 
-
-.PHONY: ctest
 ctest:
 	$(CC) $(CFLAGS) $(foreach var,$(SRC), ./csrc/$(var).c)\
 	 -o $(OUT) $(EXTRA) $(EXE)
 
-
-.PHONY: cpptest
 cpptest: all
 	$(CPP) $(CPPFLAGS) ./csrc/use_dll.cpp -o $(OUT) $(LDL)
 
-
-.PHONY: clean-linux
 clean-linux:
-	rm -f *.exe *.so *.dll
+	rm -f *.exe ./lpfgopt/*.so ./lpfgopt/*.dll
 
-.PHONY: clean-windows
 clean-windows:
 	del *.exe
-	del *.dll
-	del *.so
+	del .\lpfgopt\*.dll
+	del .\lpfgopt\*.so
 
-
-.PHONY: clean
 clean: $(CLEANER)

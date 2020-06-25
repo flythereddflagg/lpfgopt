@@ -3,7 +3,7 @@
     #include <windows.h>
     #define RTLD_NOW
     #define dlopen(path, mode) LoadLibrary(TEXT(path))
-    #define DLL_PATH "./leapfrog.dll"
+    #define DLL_PATH "./lpfgopt/leapfrog.dll"
     #define dlsym GetProcAddress
     #define dlclose FreeLibrary
     #define dlerror GetLastError
@@ -12,7 +12,7 @@
     #include <dlfcn.h>
     #define HINSTANCE void*
     #define ERR char*
-    #define DLL_PATH "./leapfrog_c.so"
+    #define DLL_PATH "./lpfgopt/leapfrog_c.so"
 #endif
 
 
@@ -33,8 +33,9 @@ int main(void)
     typedef void ext_func(
                 double (*)(double*), double*, double*, size_t,
                 size_t, double (*)(double*), size_t*, size_t,
-                size_t, double, size_t, double**,
+                size_t, double, size_t, double**, int,
                 void (*)(double*), double*);
+    typedef size_t nr;
 
     HINSTANCE handle = dlopen(DLL_PATH, RTLD_NOW);
 
@@ -44,16 +45,16 @@ int main(void)
     }
 
     ext_func* minimize = (ext_func*) dlsym(handle, "minimize");
+    const size_t N_RESULTS = (size_t) *((nr*) dlsym(handle, "N_RESULTS"));
 
-    size_t i;
-    size_t xlen = 2;
+    size_t i, xlen = 2;
     double* lower = new double[xlen];
     double* upper = new double[xlen];
     double (*fptr)(double* x) = &f;
     double (*gptr)(double* x) = &g;
     size_t discretelen = 2;
     size_t* discrete = new size_t[discretelen];
-    double* best = new double[xlen + 6];
+    double* best = new double[xlen + N_RESULTS];
 
     discrete[0] = 0;
     discrete[1] = 1;
@@ -64,10 +65,10 @@ int main(void)
     }
 
     minimize(fptr, lower, upper, xlen, 20, gptr, discrete, discretelen,
-             1e5, 1e-3, 1569434771, NULL, NULL, best);
+             1e5, 1e-3, 1569434771, NULL, 0, NULL, best);
 
 
-    for(i = 0; i < xlen+6; i++){
+    for(i = 0; i < xlen + N_RESULTS; i++){
         printf("%f ", best[i]);
     }
     printf("\n");

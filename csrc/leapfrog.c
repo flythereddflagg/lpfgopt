@@ -16,6 +16,9 @@
     #include "leapfrog.h"
 #endif
 
+const size_t N_RESULTS = 7;
+
+
 typedef struct {
 
     double (*f)(double*);   // the objective function
@@ -25,7 +28,8 @@ typedef struct {
 
     double* lower;          // the lower bounds; length = xlen
     double* upper;          // the upper bounds; length = xlen
-    double** pointset;      // point set shape = (points, xlen)
+    double** pointset;      // point set; shape = (points, xlen)
+    int free_pointset;      // (bool) free the pointset when done?
     double* objs;           // the objective function values; length = points
 
     size_t* discrete;       // array of discrete indices
@@ -62,7 +66,8 @@ error:
 double** zeros(size_t rows, size_t columns)
 {
 /**
-* Allocs a 2d array initialized with zeros.
+* Allocs a 2d array initialized with zeros. 
+* Returns a pointer to the array.
 */
     check(rows > 0 && columns > 0,
         "'rows' and 'columns' must be greater than 0.");
@@ -104,7 +109,8 @@ void free_data(leapfrog_data* self)
 * will free an allocated leapfrog_data struct.
 */
     if(self->objs) free(self->objs);
-    if(self->pointset) free_array_2d(self->pointset, self->points);
+    if(self->pointset && self->free_pointset) 
+            free_array_2d(self->pointset, self->points);
     if(self) free(self);
 }
 
@@ -214,13 +220,13 @@ void calculate_convergence(leapfrog_data* self)
 * convergence value is taken as the error of the optimization
 * and once the error <= tolerance the optimization ends.
 */
-    double obj_best = self->objs[self->besti];
-    double obj_worst = self->objs[self->worsti];
+    double objective_best = self->objs[self->besti];
+    double objective_worst = self->objs[self->worsti];
     double norm1, err_obj, dist_sum = 0.0, constraint_penalty = 0.0;
 
-    if(fabs(obj_best) < self->tol) norm1 = self->tol;
-    else norm1 = obj_best;
-    err_obj = fabs((obj_worst - obj_best)/norm1);
+    if(fabs(objective_best) < self->tol) norm1 = self->tol;
+    else norm1 = objective_best;
+    err_obj = fabs((objective_worst - objective_best)/norm1);
     for(size_t i = 0; i < self->points; i++){
         if(self->g && self->g(self->pointset[i]) > 0.0){
             constraint_penalty = 2.0 * self->tol;
@@ -254,7 +260,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
                             double* upper, size_t xlen, size_t points,
                             double (*gptr)(double*), size_t* discrete,
                             size_t discretelen, double tol,
-                            double** pointset)
+                            double** pointset, int init_pointset)
 {
 /**
 * Allocates memory for and initializes the main leapfrog_data struct
@@ -265,7 +271,9 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     self->g = gptr;
     self->xlen = xlen;
     self->points = points;
-    self->pointset = zeros(points, self->xlen + 1);
+    self->pointset = !pointset || init_pointset ? 
+                        zeros(points, self->xlen + 1) : pointset;
+    self->free_pointset = !pointset || init_pointset ? 1 : 0;
     self->objs = (double*) malloc(sizeof(double) * self->points);
     self->nfev = 0;
     self->maxcv = 0.0;
@@ -286,7 +294,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
     }
     for(size_t i = 0; i < self->points; i++){
         for(size_t j = 0; j < self->xlen; j++){
-            if(!pointset)
+            if(!pointset || init_pointset)
                 self->pointset[i][j] = uniform(self->lower[j], self->upper[j]);
             else self->pointset[i][j] = pointset[i][j];
             enforce_discrete(self, i, j);
@@ -304,97 +312,107 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
 
 
 void minimize(
-                double (*fptr)(double*), double* lower, double* upper,
-                size_t xlen, size_t points, double (*gptr)(double*),
-                size_t* discrete, size_t discretelen, size_t maxit,
-                double tol, size_t seedval, double** pointset,
-                void (*callback)(double*), double* best)
+        double (*fptr)(double*), double* lower, double* upper,
+        size_t xlen, size_t points, double (*gptr)(double*),
+        size_t* discrete, size_t discretelen, size_t maxit,
+        double tol, size_t seedval, double** pointset,
+        int init_pointset, void (*callback)(double*),
+        double* solution)
 {
 /**
 * Minimizes a function until the convergence criteria are
 * satisfied or the number of iterations exceeds
 * 'maxit'.
 *  The LeapFrog minimizer takes the following parameters:
-*       - fptr        : pointer to objective function with signature
-*                       double fptr(double*)
-*       - lower       : variable lower bounds
-*       - upper       : variable upper bounds
-*       - xlen        : number of variables, should correspond to the lengths
-*                       of lower, upper and the array passed into fptr
-*       - points      : point set size
-*       - gptr        : pointer to the constraint function with signature
-*                       double gptr(double*). Must return a value <= 0.0 when
-*                       all constraints are satisfied. gptr returning a value
-*                       > 0.0 will make the optimizer punish that point.
-*                       NULL may be passed in to indicate unconstrained
-*                       optimization
-*       - discrete    : size_t array of indices that correspond to
-*                       discrete variables. These variables
-*                       will be constrained to integer values
-*                       by truncating any randomly generated
-*                       number (i.e. rounding down to the
-*                       nearest integer absolute value)
-*                       bounds are automatically adjusted to ensure
-*                       the bounded space remains the same
-*       - maxit       : maximum iterations
-*       - tol         : convergence tolerance
-*       - seedval     : random seed
-*       - pointset    : starting point set of shape (points, xlen)
-*       - callback    : function to be called after each iteration; has
-*                       signature: void callback(double*)
-*       - best        : double array of length = xlen + 6 to which output
-*                       is copied.
+* - fptr          : pointer to objective function with signature
+*                   double fptr(double*)
+* - lower         : variable lower bounds
+* - upper         : variable upper bounds
+* - xlen          : number of variables, should correspond to the lengths
+*                   of lower, upper and the array passed into fptr
+* - points        : point set size
+* - gptr          : pointer to the constraint function with signature
+*                   double gptr(double*). Must return a value <= 0.0 when
+*                   all constraints are satisfied. gptr returning a value
+*                   > 0.0 will make the optimizer punish that point.
+*                   NULL may be passed in to indicate unconstrained
+*                   optimization
+* - discrete      : size_t array of indices that correspond to
+*                   discrete variables. These variables
+*                   will be constrained to integer values
+*                   by truncating any randomly generated
+*                   number (i.e. rounding down to the
+*                   nearest integer absolute value)
+*                   bounds are automatically adjusted to ensure
+*                   the bounded space remains the same
+* - maxit         : maximum iterations
+* - tol           : convergence tolerance
+* - seedval       : random seed
+* - pointset      : starting point set of shape (points, xlen); 
+                    if given, it will be changed.
+* - init_pointset : (bool) flag to say whether to use the given pointset
+                    or to reinitialize the pointset before optimizing.
+* - callback      : function to be called after each iteration; has
+*                   signature: void callback(double*)
+* - solution      : double array of length = xlen + 6 to which output
+*                   is copied.
 *
-*      *** Optimization Results ***
-* Optimization output is copied to "best" which is a double array
-* of length = xlen + 6 where the elements are (in order):
-*  - best[0], best[1] ... best[xlen - 1]: the optimized inputs
-*  - best[xlen]: the objective function value at those inputs
-*  - best[xlen + 1]: a status code indicating the success or error of the
+* ## Returns
+* Optimization output is copied to solution which is a double array
+* of length = xlen + N_RESULTS where the elements are (in order):
+*  - solution[0], solution[1] ... solution[xlen - 1]: the optimized inputs
+*  - solution[xlen]: a status code indicating the success or error of the
 *       optimization. Values are:
 *           0 : optimization completed successfully
 *           1 : the maximum number of iterations was exceeded
-*  - best[xlen + 2]: the number of function evaluations in the optimization
-*       (value should be a whole number > 0 and <= maxit + points)
-*  - best[xlen + 3]: the number of iterations (value should be a
+*           2 : another error occured
+*  - solution[xlen + 1]: the objective function value at those inputs
+*  - solution[xlen + 2]: the number of iterations (value should be a
 *       whole number > 0 and <= maxit)
-*  - best[xlen + 4]: the maximum constraint violation that occurred during
-*       the optimization. If the function pointer is NULL then it is
-*       set to 0.0
-*   - best[xlen + 5]: the final error of the optimization
+*   - solution[xlen + 3]: the final error of the optimization
+*   - solution[xlen + 6]: the maximum constraint violation that occurred during
+*       the optimization. If the function pointer is NULL then it is set to 0.0
+*   - solution[xlen + 4]: the index of the best player
+*   - solution[xlen + 5]: the index of the worst player
 */
 
 /***************** SANITIZE INPUT ********************/
+    leapfrog_data* self = NULL;
+    check(
+        fptr && lower && upper && xlen && points && maxit && tol && solution, 
+        "Invalid NULL passed in."
+    );
 /***************** END SANITIZE INPUT ****************/
     size_t iters;
 
     if(seedval) srand(seedval);
     else srand(time(0));
 
-    leapfrog_data* self = init_leapfrog(fptr, lower, upper, xlen, points,
-                                       gptr, discrete, discretelen, tol,
-                                       pointset);
-    for(iters = 0; iters < maxit; iters++) {
+    self = init_leapfrog(
+        fptr, lower, upper, xlen, points, gptr, discrete, discretelen, 
+        tol, pointset, init_pointset
+    );
+    for(iters = 1; iters <= maxit; iters++) {
         iterate(self);
-        if(self->error < tol){
-            break;
-        }
+        if(self->error < tol) break;
         if(callback) callback(self->pointset[self->besti]);
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
 
     for(size_t i = 0; i < self->xlen; i++){
-        best[i] = self->pointset[self->besti][i];
+        solution[i] = self->pointset[self->besti][i];
     }
-    best[xlen] = self->objs[self->besti];
-    best[xlen + 1] = iters >= maxit ? 1.0 : 0.0;
-    best[xlen + 2] = self->nfev;
-    best[xlen + 3] = iters >= maxit ? iters : iters + 1;
-    best[xlen + 4] = self->maxcv;
-    best[xlen + 5] = self->error;
-
+    solution[xlen + 0] = iters >= maxit ? 1.0 : 0.0;    // opt exit status                        
+    solution[xlen + 1] = self->objs[self->besti];       // best objective funciton value     
+    solution[xlen + 2] = iters;                         // number of iterations
+    solution[xlen + 3] = self->error;                   // the final error
+    solution[xlen + 4] = self->maxcv;                   // the max constraint violaion
+    solution[xlen + 5] = self->besti;                   // the index of the best player
+    solution[xlen + 6] = self->worsti;                  // the index of the worst player
+    
+    
     free_data(self);
 
-// error:
-//     if(self) free_data(self);
+error:
+    if(self) free_data(self);
 }

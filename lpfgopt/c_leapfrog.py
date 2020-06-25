@@ -61,17 +61,26 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
     ctol = ctypes.c_double(tol)
 
     if pointset is None:
-        cpointset = ctypes.POINTER(ctypes.c_uint)()
+        pointset_ = [[0.0 for i in range(xlen)] for row in range(points)]
+        init_pointset = ctypes.c_int(1)
     else:
-        pointset_list = [(ctypes.c_double * xlen)(*row) for row in pointset]
-        cpointset = (ctypes.POINTER(ctypes.c_double) * points)(*pointset_list)
+        init_pointset = ctypes.c_int(0)
 
-    c_output = (ctypes.c_double * (len(lower)+6))(
-                *[0.0 for i in range(len(lower)+6)])
+    pointset_list = [(ctypes.c_double * xlen)(*row) for row in pointset]
+    cpointset = (ctypes.POINTER(ctypes.c_double) * points)(*pointset_list)\
 
-    cdll.minimize(fptr, lowerp, upperp, cxlen, cpoints, gptr, cdiscrete,
-                  discretelen, cmaxit, ctol, cseedval, cpointset, cbp,
-                  c_output)
+    n_results = ctypes.cast(
+                    cdll.N_RESULTS, 
+                    ctypes.POINTER(ctypes.c_long)
+    ).contents.value
+    c_output = (ctypes.c_double * (len(lower) + n_results))(
+                *[0.0 for i in range(len(lower) + n_results)])
+
+    cdll.minimize(
+        fptr, lowerp, upperp, cxlen, cpoints, gptr, cdiscrete,
+        discretelen, cmaxit, ctol, cseedval, cpointset, init_pointset,
+        cbp, c_output
+    )
 
     output = list(c_output)
     return {
