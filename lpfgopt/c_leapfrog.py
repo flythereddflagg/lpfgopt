@@ -17,38 +17,39 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
         filename = root + "/leapfrog_c.so"
 
     cdll = ctypes.cdll.LoadLibrary(filename)
-    xlen = len(bounds)
-    def f(x):
+
+    def f(x, xlen):
         return fun([x[i] for i in range(xlen)], *args)
 
-    def g(x):
+    def g(x, xlen):
         if fconstraint is None: return
         return fconstraint([x[i] for i in range(xlen)])
 
-    def cb(x):
+    def cb(x, xlen):
         if callback is None: return
         return callback([x[i] for i in range(xlen)])
 
-    prototype = ctypes.CFUNCTYPE(ctypes.c_double,
-                                ctypes.POINTER(ctypes.c_double))
-    fptr = prototype(f)
-    if fconstraint is not None:
-        gptr = prototype(g)
-    else:
-        gptr = ctypes.POINTER(ctypes.c_double)()
+    dprototype = ctypes.CFUNCTYPE(
+        ctypes.c_double,
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.c_size_t
+    )
+    vprototype = ctypes.CFUNCTYPE(
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_double),
+        ctypes.c_size_t
+    )
 
-    if callback is not None:
-        pt = ctypes.CFUNCTYPE(ctypes.c_void_p,
-                              ctypes.POINTER(ctypes.c_double))
-        cbp = pt(cb)
-    else:
-        cbp = ctypes.POINTER(ctypes.c_void_p)()
+    NULL_DPTR = ctypes.POINTER(ctypes.c_double)()
+    NULL_VPTR = ctypes.POINTER(ctypes.c_void_p)()
+    CZERO = ctypes.c_size_t(0)
 
-    if seedval is not None:
-        cseedval = ctypes.c_size_t(seedval)
-    else:
-        cseedval = ctypes.c_size_t(0)
+    fptr = dprototype(f)
+    gptr = NULL_DPTR if fconstraint is None else dprototype(g)
+    cbp = NULL_VPTR if callback is None else vprototype(cb)
+    cseedval = CZERO if seedval is None else ctypes.c_size_t(seedval)
 
+    xlen = len(bounds)  
     lower = [i[0] for i in bounds]
     upper = [i[1] for i in bounds]
     lowerp = (ctypes.c_double * len(lower))(*lower)
@@ -70,19 +71,39 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
     cpointset = (ctypes.POINTER(ctypes.c_double) * points)(*pointset_list)
 
     n_results = ctypes.cast(
-                    cdll.N_RESULTS, 
-                    ctypes.POINTER(ctypes.c_long)
+        cdll.N_RESULTS, 
+        ctypes.POINTER(ctypes.c_long)
     ).contents.value
-    c_output = (ctypes.c_double * (len(lower) + n_results))(
+
+    solution = (ctypes.c_double * (len(lower) + n_results))(
                 *[0.0 for i in range(len(lower) + n_results)])
     print("init done")
     cdll.minimize(
         fptr, lowerp, upperp, cxlen, cpoints, gptr, cdiscrete,
         discretelen, cmaxit, ctol, cseedval, cpointset, init_pointset,
-        cbp, c_output
+        cbp, solution
     )
+# void minimize(
+#     double (*fptr)(double*, size_t), 
+#     double* lower, 
+#     double* upper,
+#     size_t xlen, 
+#     size_t points, 
+#     double (*gptr)(double*, size_t),
+#     size_t* discrete, 
+#     size_t discretelen, 
+#     size_t maxit,
+#     double tol, 
+#     size_t seedval, 
+#     double** pointset,
+#     int init_pointset, 
+#     void (*callback)(double*, size_t),
+#     double* solution
+# );
 
-    output = list(c_output)
+    print("opt done")
+
+    output = list(solution)
     return {
         'x'             : output[:xlen],
         'fun'           : output[xlen],
@@ -104,10 +125,19 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
 def main():
     def f(x):
         return x[0]*x[0] + x[1]*x[1] + 100
+    
+    def g(x):
+        return -x[0] *x[0] + 10 - x[1]
+    
+    def cb(x):
+        print(x)
 
     bounds = [[-5.0, 5.0],[-5.0, 5.0]]
-    best = minimize(f, bounds, seedval = 1234)
-
+    best = minimize(f, bounds, 
+        seedval = 1234, callback = cb,
+        fconstraint = g
+    )
+    print(best)
     print("\nBest:")
     for key, value in best.items():
         print(f"    {key:<12} : {value}")

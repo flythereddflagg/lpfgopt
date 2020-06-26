@@ -21,8 +21,8 @@ const size_t N_RESULTS = 7;
 
 typedef struct {
 
-    double (*f)(double*);   // the objective function
-    double (*g)(double*);   // the constraint function
+    double (*f)(double* x, size_t xlen);   // the objective function
+    double (*g)(double* x, size_t xlen);   // the constraint function
     size_t xlen;            // the number of args in f and g
     size_t points;          // the number of points for optimization
 
@@ -173,7 +173,7 @@ void enforce_constraints(leapfrog_data* self, size_t row)
         mbig = fabs(self->objs[i]);
         if(mbig > big) big = mbig;
     }
-    constraint_value = self->g(self->pointset[row]);
+    constraint_value = self->g(self->pointset[row], self->xlen);
     if(constraint_value > 0.0){
         if(constraint_value > self->maxcv) self->maxcv = constraint_value;
         self->objs[row] = big + constraint_value;
@@ -204,7 +204,7 @@ void leapfrog(leapfrog_data* self)
         self->pointset[self->worsti][j] = uniform(b1, b2);
         enforce_discrete(self, self->worsti, j);
     }
-    self->objs[self->worsti] = self->f(self->pointset[self->worsti]);
+    self->objs[self->worsti] = self->f(self->pointset[self->worsti], self->xlen);
     self->nfev++;
     enforce_constraints(self, self->worsti);
 }
@@ -228,7 +228,7 @@ void calculate_convergence(leapfrog_data* self)
     else norm1 = objective_best;
     err_obj = fabs((objective_worst - objective_best)/norm1);
     for(size_t i = 0; i < self->points; i++){
-        if(self->g && self->g(self->pointset[i]) > 0.0){
+        if(self->g && self->g(self->pointset[i], self->xlen) > 0.0){
             constraint_penalty = 2.0 * self->tol;
         }
         for(size_t j = 0; j < self->xlen; j++){
@@ -256,10 +256,10 @@ void iterate(leapfrog_data* self)
 }
 
 
-leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
-                            double* upper, size_t xlen, size_t points,
-                            double (*gptr)(double*), size_t* discrete,
-                            size_t discretelen, double tol,
+leapfrog_data* init_leapfrog(double (*fptr)(double* x, size_t xlen), 
+                            double* lower, double* upper, size_t xlen, size_t points,
+                            double (*gptr)(double* x, size_t xlen), 
+                            size_t* discrete, size_t discretelen, double tol,
                             double** pointset, int init_pointset)
 {
 /**
@@ -299,7 +299,7 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
             else self->pointset[i][j] = pointset[i][j];
             enforce_discrete(self, i, j);
         }
-        self->objs[i] = self->f(self->pointset[i]);
+        self->objs[i] = self->f(self->pointset[i], self->xlen);
         self->nfev++;
     }
     eval_best_worst(self);
@@ -312,11 +312,11 @@ leapfrog_data* init_leapfrog(double (*fptr)(double*), double* lower,
 
 
 void minimize(
-        double (*fptr)(double*), double* lower, double* upper,
-        size_t xlen, size_t points, double (*gptr)(double*),
+        double (*fptr)(double*, size_t), double* lower, double* upper,
+        size_t xlen, size_t points, double (*gptr)(double*, size_t),
         size_t* discrete, size_t discretelen, size_t maxit,
         double tol, size_t seedval, double** pointset,
-        int init_pointset, void (*callback)(double*),
+        int init_pointset, void (*callback)(double*, size_t),
         double* solution)
 {
 /**
@@ -395,20 +395,20 @@ void minimize(
     for(iters = 1; iters <= maxit; iters++) {
         iterate(self);
         if(self->error < tol) break;
-        if(callback) callback(self->pointset[self->besti]);
+        if(callback) callback(self->pointset[self->besti], self->xlen);
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
 
     for(size_t i = 0; i < self->xlen; i++){
         solution[i] = self->pointset[self->besti][i];
     }
-    solution[xlen + 0] = iters >= maxit ? 1.0 : 0.0;    // opt exit status                        
-    solution[xlen + 1] = self->objs[self->besti];       // best objective funciton value     
-    solution[xlen + 2] = iters;                         // number of iterations
-    solution[xlen + 3] = self->error;                   // the final error
-    solution[xlen + 4] = self->maxcv;                   // the max constraint violaion
-    solution[xlen + 5] = self->besti;                   // the index of the best player
-    solution[xlen + 6] = self->worsti;                  // the index of the worst player
+    solution[xlen + 0] = iters >= maxit ? 1.0 : 0.0; // opt exit status                        
+    solution[xlen + 1] = self->objs[self->besti];    // best objective funciton value     
+    solution[xlen + 2] = iters;                      // number of iterations
+    solution[xlen + 3] = self->error;                // the final error
+    solution[xlen + 4] = self->maxcv;                // the max constraint violaion
+    solution[xlen + 5] = self->besti;                // the index of the best player
+    solution[xlen + 6] = self->worsti;               // the index of the worst player
     
     
     free_data(self);

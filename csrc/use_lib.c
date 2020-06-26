@@ -3,24 +3,59 @@
 #include "leapfrog.h"
 #include "dbg.h"
 
-double f(double* x)
+typedef enum {false, true} bool;
+
+double start_pts[20][2] = {
+    {-3.26,   -7.9},
+    {-0.30,   2.33},
+    {-7.37,   6.11},
+    {-0.19,   7.01},
+    {-7.21,   -8.8},
+    {-6.87,   4.09},
+    {-4.58,   9.06},
+    {-9.75,   -8.9},
+    {4.901,   -3.1},
+    {-7.53,   1.69},
+    {5.437,   0.57},
+    {-7.73,   9.82},
+    {0.549,   5.66},
+    {9.238,   -7.5},
+    {-1.29,   -4.2},
+    {7.726,   1.42},
+    {-4.32,   6.00},
+    {-7.11,   9.40},
+    {1.937,   7.50},
+    {7.092,  -9.88}
+};
+
+double f(double* x, size_t xlen)
 {
     return x[0]*x[0] + x[1]*x[1] + 100;
 }
 
-double g(double* x)
+double g(double* x, size_t xlen)
 {
     return -x[0] *x[0] + 10 - x[1];
 }
 
-int main(int argc, char** argv)
+void callback(double* x, size_t xlen)
 {
     size_t i;
-    size_t xlen = 2;
+    for (i = 0; i < xlen; i++){
+        printf("%.5f ", x[i]);
+    }
+    printf("\n");
+}
+
+int main(int argc, char** argv)
+{
+    size_t i = 0, xlen = 2, points = 20, maxit = 1e5, seedval = 1569434771;
+    double tol = 1e-3;
     double* lower = (double*)malloc(sizeof(double)*xlen);
     double* upper = (double*)malloc(sizeof(double)*xlen);
-    double (*fptr)(double* x) = &f;
-    double (*gptr)(double* x) = &g;
+    double (*fptr)(double* x, size_t xlen) = &f;
+    double (*gptr)(double* x, size_t xlen) = &g;
+    void (*cbptr)(double* x, size_t xlen) = &callback;
     size_t discretelen = 2;
     size_t* discrete = (size_t*)malloc(sizeof(size_t)*discretelen);
     double* best = (double*)malloc(sizeof(double)*(xlen + N_RESULTS));
@@ -33,8 +68,8 @@ int main(int argc, char** argv)
         upper[i] =  10.0;
     }
     
-    minimize(fptr, lower, upper, xlen, 20, gptr, discrete, discretelen,
-             1e5, 1e-3, 1569434771, NULL, 0, NULL, best);
+    minimize(fptr, lower, upper, xlen, points, gptr, discrete, discretelen,
+             maxit, tol, seedval, &start_pts, false, cbptr, best);
 
     for(i = 0; i < xlen + N_RESULTS; i++){
         printf("%f ", best[i]);
