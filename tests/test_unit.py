@@ -123,7 +123,7 @@ def test_c_vs_py():
     pytime = stop - start
 
 
-    assert False,\
+    assert ctime/cfev < pytime/pyfev,\
         f"""C code is underperforming
 Ctime : {ctime:.12f} fev: {cfev:4d} t/fev: {ctime/cfev}
 Pytime: {pytime:.12f} fev: {pyfev:4d} t/fev: {pytime/pyfev}
