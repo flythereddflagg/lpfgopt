@@ -124,6 +124,6 @@ def test_unit_c():
 
     print(solution)
 
-    check = [21.0, -3, 0]
+    check = [ -3, 0]
     for i in range(len(solution["best"])):
         assert solution["best"][i] == check[i], f"Unit test failed on {i}"

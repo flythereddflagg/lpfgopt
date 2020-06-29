@@ -25,39 +25,7 @@ about:
 """
 
 import numpy as np
-from lpfgopt import c_minimize as minimize
-
-
-def run(f, bounds, check, options={}, output=False, tol=1e-3):
-    '''
-    Runs a benchmark test with the given parameters and causes a
-    failing result for nosetests on a failure.
-    '''
-    sol = minimize(f, bounds, **options)
-
-    r = "Correct opt"
-    print(f"{r:12} : {check}\n")
-
-    for key, value in sol.items():
-        if key == "pointset": continue
-        print(f"{key:12} : {value}")
-
-    for i in sol['pointset']:
-        print(i, options['fconstraint'](i[1:]))
-
-    assert sol['success'], "Optimization Failed"
-
-    for i in range(len(check)):
-        if abs(check[i]) < tol:
-            norm = 1.0
-        else:
-            norm = check[i]
-        err = abs((check[i] - sol['x'][i])/norm)
-        assert err <= tol, f"Failed on parameter index {i} with error {err}"
-
-    if output:
-        raise Exception("Generic Exception")
-
+from . import *
 
 # def test_sphere_constr_test():
 #     """
@@ -79,7 +47,7 @@ def run(f, bounds, check, options={}, output=False, tol=1e-3):
 
 #     check = [-3.0958051486911997, 0.4159905027317925]
 
-#     run(f, bounds, check, options)
+#     run(f, bounds, check, options, min_=c_minimize)
 
 
 def test_rosenbrock_line_cubic_test():
@@ -114,7 +82,7 @@ def test_rosenbrock_line_cubic_test():
 #         [-3.0, 3.0]]
     check = [1.0, 1.0]
 
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -138,7 +106,7 @@ def test_rosenbrock_disk_test():
 
     check = [1.0, 1.0]
 
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -170,7 +138,7 @@ def test_mishra_bird_constr_test():
 
     check = [-3.1302468, -1.5821422]
 
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 

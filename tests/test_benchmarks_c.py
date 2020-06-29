@@ -29,39 +29,7 @@ about:
 """
 
 import numpy as np
-from lpfgopt import c_minimize as minimize
-
-
-def run(f, bounds, check, options={}, output=False, tol=1e-3):
-    '''
-    Runs a benchmark test with the given parameters and causes a
-    failing result for nosetests on a failure.
-    '''
-
-    sol = minimize(f, bounds, **options)
-
-    r = "Correct opt"
-    print(f"{r:12} : {check}\n")
-    
-    for key, value in sol.items():
-        if key == "pointset": continue
-        print(f"{key:12} : {value}")
-
-    for i in sol['pointset']:
-        print(i)
-
-    assert sol['success'], "Optimization Failed"
-    
-    for i in range(len(check)):
-        if abs(check[i]) < tol:
-            norm = 1.0
-        else:
-            norm = check[i]
-        err = abs((check[i] - sol['x'][i])/norm)
-        assert err <= tol, f"Failed on parameter index {i} with error {err}"
-    
-    if output:
-        raise Exception("Generic Exception")
+from . import *
     
     
 
@@ -86,7 +54,7 @@ def test_rastrigin():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 def test_ackley():
@@ -108,7 +76,7 @@ def test_ackley():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
         
         
 
@@ -129,7 +97,7 @@ def test_sphere():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
         
         
 def test_rosenbrock():
@@ -149,7 +117,7 @@ def test_rosenbrock():
     
     check = [1.0, 1.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -173,7 +141,7 @@ def test_beale():
     
     check = [3.0, 0.5]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -199,7 +167,7 @@ def test_goldstein_price():
     
     check = [0.0, -1.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
   
     
 
@@ -220,7 +188,7 @@ def test_booth():
     
     check = [1.0, 3.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -263,7 +231,7 @@ def test_matyas():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
     
@@ -286,7 +254,7 @@ def test_levi13():
     
     check = [1.0, 1.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -307,9 +275,9 @@ def test_himmelblau():
         [-5.0, 5.0],
         [-5.0, 5.0]]
     
-    check = [-3.779310, -3.283186]
+    check = [3.0, 2.0]
     
-    run(f, bounds, check, options)
+    run(f, bounds, check, options, min_=c_minimize)
 
 
 
@@ -330,7 +298,7 @@ def test_three_hump_camel():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 def test_easom():
@@ -352,7 +320,7 @@ def test_easom():
     
     check = [np.pi, np.pi]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 
@@ -376,7 +344,7 @@ def test_cross_in_tray():
     
     check = [1.34941, 1.34941]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 
@@ -424,7 +392,7 @@ def test_holder_table():
     
     check = [-8.05502, -9.66459]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 
@@ -446,7 +414,7 @@ def test_mccormick():
     
     check = [-0.54719, -1.54719]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 
@@ -455,7 +423,7 @@ def test_schaffer2():
     Schaffer function N.2 benchmark
     """
     options = {
-        "points"      : 200,
+        "points"      : 300,
         "tol"         : 2e-2,
         "seedval"     : 4815162342,
         }
@@ -469,7 +437,7 @@ def test_schaffer2():
     
     check = [0.0, 0.0]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 
@@ -490,9 +458,9 @@ def test_schaffer4():
         [-100.0, 100.0],
         [-100.0, 100.0]]
         
-    check = [1.25313, 0.0]
+    check = [0.0, 1.25313]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
     
 
@@ -514,5 +482,5 @@ def test_styblinski_tang():
     
     check = [-2.903534, -2.903534]
     
-    run(f, bounds, check, options)  
+    run(f, bounds, check, options, min_=c_minimize)  
     
