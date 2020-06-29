@@ -6,9 +6,9 @@ from ctypes import cdll as cdll_
 
 from lpfgopt.opt_result import OptimizeResult
 
-WIN_LIB = "/leapfrog.dll"
-UNIX_LIB = "/leapfrog_c.so"
-DARWIN_LIB = "/leapfrog_c.dylib"
+WIN_LIB = ".dll"
+UNIX_LIB = ".so"
+DARWIN_LIB = ".dylib"
 MESSAGES = [
     "optimization completed successfully",
     "the maximum number of iterations was exceeded",
@@ -17,12 +17,13 @@ MESSAGES = [
 
 
 def load_leapfrog_lib():
+    """
+    Loads the leapfrog dynamic library for later use.
+    @returns a reference to the ctypes library.
+    """
     root = os.path.dirname(os.path.abspath(__file__))
-    if os.name == 'nt':
-        filename = root + WIN_LIB
-    else:
-        filename = root + UNIX_LIB
-
+    ext = WIN_LIB if os.name == 'nt' else UNIX_LIB
+    filename = root + "/leapfrog_c" + WIN_LIB
     cdll = cdll_.LoadLibrary(filename)
     return cdll
 
@@ -66,8 +67,8 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
             status      = output[xlen],
             message     = MESSAGES[int(output[xlen])],
             fun         = output[xlen + 1],
-            nfev        = output[xlen + 2] + points,
-            nit         = output[xlen + 2],
+            nfev        = int(output[xlen + 2] + points),
+            nit         = int(output[xlen + 2]),
             final_error = output[xlen + 3],
             maxcv       = output[xlen + 4],
             best        = final_pointset[int(output[xlen + 5])], 

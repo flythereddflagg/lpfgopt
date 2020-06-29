@@ -1,6 +1,6 @@
 from __future__ import print_function
 from lpfgopt.leapfrog import LeapFrog
-from lpfgopt.c_leapfrog import minimize as c_minimize
+from lpfgopt.c_leapfrog import minimize as c_minimize, load_leapfrog_lib
 
 # get version of lpfgopt
 import os
@@ -11,7 +11,8 @@ del os
 
 
 def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
-             maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None):
+             maxit=10000, tol=1e-5, seedval=None, pointset=None, callback=None,
+             use_c_lib=False, cdll_ptr=None):
     """
     General-use wrapper function to interface with the LeapFrog optimizer class.
     Contains the data and methods necessary to run a LeapFrog optimization.
@@ -26,11 +27,10 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
         - points      : {int} point set size
         - fconstraint : {callable} constraint function of the form g(x) <= 0
         - discrete    : {array-like} list of indices that correspond to 
-                        discrete variables. These variables
-                        will be constrained to integer values
-                        by truncating any randomly generated
-                        number (i.e. rounding down to the 
-                        nearest integer absolute value)
+                        discrete variables. These variables will be constrained 
+                        to integer values by truncating any randomly generated
+                        number (i.e. rounding down to the nearest absolute
+                        integer value)
         - maxit       : {int} maximum iterations
         - tol         : {float} convergence tolerance
         - seedval     : {int} random seed
@@ -98,8 +98,12 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
         "tol"         : tol,
         "seedval"     : seedval,
         "pointset"    : pointset,
-        "callback"    : callback
+        "callback"    : callback,
+        "use_c_lib"   : use_c_lib,
+        "cdll_ptr"    : cdll_ptr
         }
-        
+    
+    if use_c_lib:
+        return c_minimize(**options)
     lf = LeapFrog(**options)
     return lf.minimize()

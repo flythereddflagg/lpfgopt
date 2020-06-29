@@ -1,5 +1,7 @@
 import numpy as np
-from lpfgopt import minimize, c_minimize
+from lpfgopt import minimize, c_minimize, load_leapfrog_lib
+
+lpfg_lib = load_leapfrog_lib()
 
 
 def run(

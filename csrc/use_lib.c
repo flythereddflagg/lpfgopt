@@ -42,7 +42,7 @@ void callback(double* x, size_t xlen)
 {
     size_t i;
     for (i = 0; i < xlen; i++){
-        printf("%.5f ", x[i]);
+        printf("%.2f ", x[i]);
     }
     printf("\n");
 }
@@ -60,6 +60,15 @@ int main(int argc, char** argv)
     size_t* discrete = (size_t*)malloc(sizeof(size_t)*discretelen);
     double* best = (double*)malloc(sizeof(double)*(xlen + N_RESULTS));
 
+    double** start_ptr = (double**)malloc(sizeof(double*)*points);
+
+    for (size_t row = 0; row < points; row ++){
+        start_ptr[row] = (double*)malloc(sizeof(double)*xlen);
+        for (size_t col = 0; col < xlen; col ++){
+            start_ptr[row][col] = start_pts[row][col];
+        }
+    }
+
     discrete[0] = 0;
     discrete[1] = 1;
 
@@ -69,7 +78,7 @@ int main(int argc, char** argv)
     }
     
     minimize(fptr, lower, upper, xlen, points, gptr, discrete, discretelen,
-             maxit, tol, seedval, &start_pts, false, cbptr, best);
+             maxit, tol, seedval, start_ptr, false, cbptr, best);
 
     for(i = 0; i < xlen + N_RESULTS; i++){
         printf("%f ", best[i]);
@@ -80,6 +89,10 @@ int main(int argc, char** argv)
     free(discrete);
     free(lower);
     free(upper);
+    for (size_t row = 0; row < points; row++) {
+        if(start_ptr[row]) free(start_ptr[row]);
+    }
+    free(start_ptr);
 
     return 0;
 }

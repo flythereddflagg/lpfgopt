@@ -3,7 +3,7 @@
     #include <windows.h>
     #define RTLD_NOW
     #define dlopen(path, mode) LoadLibrary(TEXT(path))
-    #define DLL_PATH "./lpfgopt/leapfrog.dll"
+    #define DLL_PATH "./lpfgopt/leapfrog_c.dll"
     #define dlsym GetProcAddress
     #define dlclose FreeLibrary
     #define dlerror GetLastError

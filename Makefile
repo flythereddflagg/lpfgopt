@@ -6,7 +6,7 @@ ifeq ($(OS), Windows_NT)
 	LDL =
 else
 	CLEANER = clean-linux
-	DLL = _c.so
+	DLL = .so
 	LDL = -ldl
 endif
 
@@ -24,7 +24,7 @@ EXE = -D OUT_EXE
 .PHONY: ctest cpptest clean-linux clean-windows clean
 
 all:
-	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/leapfrog.c -o ./lpfgopt/leapfrog$(DLL) $(EXTRA)
+	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/leapfrog.c -o ./lpfgopt/leapfrog_c$(DLL) $(EXTRA)
 
 ctest:
 	$(CC) $(CFLAGS) $(foreach var,$(SRC), ./csrc/$(var).c)\
