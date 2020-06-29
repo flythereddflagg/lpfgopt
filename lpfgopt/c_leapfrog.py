@@ -1,5 +1,10 @@
 import ctypes
 import os
+from opt_result import OptimizeResult
+
+WIN_LIB = "/leapfrog.dll"
+UNIX_LIB = "/leapfrog_c.so"
+DARWIN_LIB = "/leapfrog_c.dylib"
 
 def minimize(fun, bounds, args=(), points=20, fconstraint=None,
             discrete=[], maxit=10000, tol=1e-5, seedval=None, 
@@ -12,9 +17,9 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
 
     root = os.path.dirname(os.path.abspath(__file__))
     if os.name == 'nt':
-        filename = root + "/leapfrog.dll"
+        filename = root + WIN_LIB
     else:
-        filename = root + "/leapfrog_c.so"
+        filename = root + UNIX_LIB
 
     cdll = ctypes.cdll.LoadLibrary(filename)
 
@@ -100,26 +105,29 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None,
 #     void (*callback)(double*, size_t),
 #     double* solution
 # );
-
-    print("opt done")
+    print("opt_done")
+    final_pointset = [[row[i] for i in range(xlen)] for row in list(cpointset)]
 
     output = list(solution)
-    return {
-        'x'             : output[:xlen],
-        'fun'           : output[xlen],
-        'status'        : int(output[xlen + 1]),
-        'nfev'          : int(output[xlen + 2]),
-        'nit'           : int(output[xlen + 3]),
-        'maxcv'         : output[xlen + 4],
-        "success"       : True if int(output[xlen + 1]) == 0 else False,
-        "message"       : "Optimization completed successfully" \
-                            if int(output[xlen + 1]) == 0 else \
-                            "Maximum iterations exceeded",
-        "best"          : [],
-        "worst"         : [],
-        "final_error"   : output[xlen + 5],
-        "pointset"      : []
-    }
+    messages = [
+        "optimization completed successfully",
+        "the maximum number of iterations was exceeded",
+        "another error occured"
+    ]
+    return OptimizeResult(
+            x           = output[:xlen],
+            success     = not bool(output[xlen]),
+            status      = output[xlen],
+            message     = messages[int(output[xlen])],
+            fun         = output[xlen + 1],
+            nfev        = output[xlen + 2] + points,
+            nit         = output[xlen + 2],
+            final_error = output[xlen + 3],
+            maxcv       = output[xlen + 4],
+            best        = final_pointset[int(output[xlen + 5])], 
+            worst       = final_pointset[int(output[xlen + 6])], 
+            pointset    = final_pointset
+        )
 
 
 def main():
@@ -137,8 +145,7 @@ def main():
         seedval = 1234, callback = cb,
         fconstraint = g
     )
-    print(best)
-    print("\nBest:")
+    print("\nOutput:")
     for key, value in best.items():
         print(f"    {key:<12} : {value}")
 

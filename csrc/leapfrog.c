@@ -271,9 +271,8 @@ leapfrog_data* init_leapfrog(double (*fptr)(double* x, size_t xlen),
     self->g = gptr;
     self->xlen = xlen;
     self->points = points;
-    self->pointset = !pointset || init_pointset ? 
-                        zeros(points, self->xlen + 1) : pointset;
-    self->free_pointset = !pointset || init_pointset ? 1 : 0;
+    self->pointset = !pointset ? zeros(points, self->xlen + 1) : pointset;
+    self->free_pointset = !pointset ? 1 : 0;
     self->objs = (double*) malloc(sizeof(double) * self->points);
     self->nfev = 0;
     self->maxcv = 0.0;
@@ -321,9 +320,8 @@ void minimize(
 {
 /**
 * Minimizes a function until the convergence criteria are
-* satisfied or the number of iterations exceeds
-* 'maxit'.
-*  The LeapFrog minimizer takes the following parameters:
+* satisfied or the number of iterations exceeds 'maxit'.
+* The LeapFrog minimizer takes the following parameters:
 * - fptr          : pointer to objective function with signature
 *                   double fptr(double*)
 * - lower         : variable lower bounds
@@ -332,11 +330,10 @@ void minimize(
 *                   of lower, upper and the array passed into fptr
 * - points        : point set size
 * - gptr          : pointer to the constraint function with signature
-*                   double gptr(double*). Must return a value <= 0.0 when
-*                   all constraints are satisfied. gptr returning a value
-*                   > 0.0 will make the optimizer punish that point.
-*                   NULL may be passed in to indicate unconstrained
-*                   optimization
+*                   double gptr(double*, size_t). Must return a value <= 0.0 
+*                   when all constraints are satisfied. gptr returning a value
+*                   > 0.0 will make the optimizer punish that point. NULL may 
+*                   be passed in to indicate unconstrained optimization
 * - discrete      : size_t array of indices that correspond to
 *                   discrete variables. These variables
 *                   will be constrained to integer values
@@ -394,11 +391,11 @@ void minimize(
     );
     for(iters = 1; iters <= maxit; iters++) {
         iterate(self);
-        if(self->error < tol) break;
+        if(self->error < tol)  break;
         if(callback) callback(self->pointset[self->besti], self->xlen);
     }
     if(iters >= maxit) log_warn("Maximum iterations exceeded.");
-
+    
     for(size_t i = 0; i < self->xlen; i++){
         solution[i] = self->pointset[self->besti][i];
     }
@@ -409,10 +406,6 @@ void minimize(
     solution[xlen + 4] = self->maxcv;                // the max constraint violaion
     solution[xlen + 5] = self->besti;                // the index of the best player
     solution[xlen + 6] = self->worsti;               // the index of the worst player
-    
-    
-    free_data(self);
-
 error:
     if(self) free_data(self);
 }

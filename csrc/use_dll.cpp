@@ -79,7 +79,8 @@ int main(void)
     ext_func* minimize = (ext_func*) dlsym(handle, "minimize");
     const size_t N_RESULTS = (size_t) *((nr*) dlsym(handle, "N_RESULTS"));
 
-    size_t i = 0, xlen = 2, points = 20, maxit = 1e5, seedval = 1569434771;
+    size_t i = 0, j = 0, xlen = 2, points = 20, maxit = 1e5, 
+        seedval = 1569434771;
     double tol = 1e-3;
     double* lower = new double[xlen];
     double* upper = new double[xlen];
@@ -109,11 +110,17 @@ int main(void)
     minimize(fptr, lower, upper, xlen, points, gptr, discrete, discretelen,
              maxit, tol, seedval, start_ptr, false, cbptr, best);
 
-
+    printf("SOLUTION: \n");
     for(i = 0; i < xlen + N_RESULTS; i++){
         printf("%f ", best[i]);
     }
     printf("\n");
+    for(i = 0; i < points; i++){
+        for(j = 0; j < xlen; j++){
+            printf("%f ", start_ptr[i][j]);
+        }
+        printf("\n");
+    }
 
     delete[] best;
     delete[] discrete;
