@@ -5,7 +5,7 @@ from lpfgopt.c_leapfrog import minimize as c_minimize
 # get version of lpfgopt
 import os
 mypackage_root_dir = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(mypackage_root_dir, '../VERSION.txt')) as version_file:
+with open(os.path.join(mypackage_root_dir, '../VERSION')) as version_file:
     __version__ = version_file.read().strip()
 del os
 
