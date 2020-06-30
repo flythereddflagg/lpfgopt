@@ -1,6 +1,44 @@
+"""
+file: __init__.py
+Package: lpfgopt
+Author: Mark Redd
+Email: redddogjr@gmail.com
+Website: http://www.r3eda.com/
+About:
+This algorithm is based the Leapfrogging Optimization Algorithm published 
+by Dr. R. Russell Rhinehart. The following publications explain the technique:
+
+- Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar, “Leapfrogging and 
+  Synoptic Leapfrogging: a new optimization approach”, Computers & Chemical 
+  Engineering, Vol. 40, 11 May 2012, pp. 67-81.
+
+- Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart, “Improved 
+  Initialization of Players in Leapfrogging Optimization”, Computers & 
+  Chemical Engineering, Vol. 60, 2014, 426-429.
+
+- Rhinehart, R. R., “Convergence Criterion in Optimilsation of Stochastic 
+  Processes”, Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
+
+API:
+This package exposes the following API to make using the Leapfrogging 
+Optimization Algorithm easier:
+
+ - minimize() [function]: a general-use wrapper for optimization.
+ - c_minimize() [function]: a wrapper for optimization explicitly using the 
+    C library instead of the Python LeapFrog class.
+ - load_leapfrog_lib() [function]: a function that returns a reference to the 
+    leapfrog C library to avoid loading the library multiple times.
+ - LeapFrog() [class]: a class for step-by-step analysis of leapfrog 
+    optimization.
+ - leapfrog_method() [function]: a wrapper function to allow the leapfrog method
+    to be used with "scipy.optimize.minimize". Pass this function into the 
+    'method' parameter to use it with scipy.
+"""
+
 from __future__ import print_function
 from lpfgopt.leapfrog import LeapFrog
 from lpfgopt.c_leapfrog import minimize as c_minimize, load_leapfrog_lib
+from lpfgopt.scipy_min import leapfrog_method
 
 # get version of lpfgopt
 import os
@@ -38,15 +76,14 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
         - callback    : {callable} function to be called after each iteration
     
     returns:
-        - solution    : a dictionary containing the results of the optimization.
-                        The members of the solution are listed below.
+        - solution    : a dictionary-like object containing the results of the 
+                        optimization. The members of the solution are listed 
+                        below.
             
-            - x           : {array-like, list} 
-                            The solution vector or the vector of 
-                            decision variables that produced the lowest 
+            - x           : {array-like, list} The solution vector or the vector
+                            of decision variables that produced the lowest 
                             objective function value
-            - success     : {bool}
-                            Whether or not the optimizer exited successfully.
+            - success     : {bool} Whether or not the optimizer exited successfully.
             - status      : {int}
                             Termination status of the optimizer. Its value 
                             depends on the underlying solver. Refer to 

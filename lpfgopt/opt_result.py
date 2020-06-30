@@ -1,19 +1,19 @@
 """
-filename : opt_result.py
-title    : Result Optimizer Class
-author   : Travis E. Oliphant, modified by Mark Redd
-email    : redddogjr@gmail.com
-website  : http://www.r3eda.com/
-about    :
+filename: opt_result.py
+Package: lpfgopt
+author: Travis E. Oliphant, modified by Mark Redd
+email: redddogjr@gmail.com
+website: http://www.r3eda.com/
+about:
 This is a modified copy of the OptimizeResult class in the scipy.optimize
 package. It has been modified to fit the needs of the lpfgopt package.
 The following notice occurs in the original:
-*    ******NOTICE***************
-*    optimize.py module by Travis E. Oliphant
-*   
-*    You may copy and use this module as you see fit with no
-*    guarantee implied provided you keep this notice in all copies.
-*    *****END NOTICE************
+********NOTICE***************
+* optimize.py module by Travis E. Oliphant
+*
+* You may copy and use this module as you see fit with no
+* guarantee implied provided you keep this notice in all copies.
+*******END NOTICE************
 """
 
 class OptimizeResult(dict):

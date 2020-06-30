@@ -1,3 +1,26 @@
+"""
+file: c_leapfrog.py
+Package: lpfgopt
+Author: Mark Redd
+Email: redddogjr@gmail.com
+Website: http://www.r3eda.com/
+About:
+Contains the functions to access and use Leapfrog C Libarary from Python.
+
+This algorithm is based the Leapfrogging Optimization Algorithm published 
+by Dr. R. Russell Rhinehart. The following publications explain the technique:
+
+- Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar, “Leapfrogging and 
+  Synoptic Leapfrogging: a new optimization approach”, Computers & Chemical 
+  Engineering, Vol. 40, 11 May 2012, pp. 67-81.
+
+- Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart, “Improved 
+  Initialization of Players in Leapfrogging Optimization”, Computers & 
+  Chemical Engineering, Vol. 60, 2014, 426-429.
+
+- Rhinehart, R. R., “Convergence Criterion in Optimilsation of Stochastic 
+  Processes”, Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
+"""
 import os
 
 from ctypes import c_size_t, c_int, c_double, c_void_p, c_long

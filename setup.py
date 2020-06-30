@@ -16,15 +16,15 @@ def readme():
         return f.read()
 
 config = {
-    'name'                 : 'lpfgopt-lite',
-    'description'          : 'Leap Frog Optimizer - Lite Edition',
+    'name'                 : 'lpfgopt',
+    'description'          : 'Leap Frog Optimizer',
     'version'              : lpfgopt.__version__,
     'author'               : 'Mark E. Redd',
     'author_email'         : 'redddogjr@gmail.com',
     'url'                  : 'http://www.r3eda.com/',
     'download_url'         : 'https://github.com/flythereddflagg/lpfgopt',
     'python_requires'      : '>=3.6',
-    'install_requires'     : ['nose', 'numpy', 'scipy'],
+    'install_requires'     : [],
     'packages'             : ['lpfgopt'],
     'scripts'              : [],
     'long_description'     : readme(),
@@ -34,7 +34,7 @@ config = {
     'license'              : 'MIT',
     "keywords"             : 'optimization direct-search gradient-free',
     'classifiers'          : [
-                                'Development Status :: 4 - Beta',
+                                'Development Status :: 5 - Production/Stable',
                                 'Intended Audience :: Science/Research',
                                 'Intended Audience :: Manufacturing',
                                 'Intended Audience :: Education',

@@ -1,3 +1,27 @@
+/**
+* File: use_dll.cpp
+* Author: Mark Redd
+* Email: redddogjr@gmail.com
+* Website: http://www.r3eda.com/
+* About:
+* This is an example usage with C++ using the shared library. To be compiled 
+* with g++. Intended to be compatible with Windows and Linux.
+* 
+* This algorithm is based the Leapfrogging Optimization Algorithm published 
+* by Dr. R. Russell Rhinehart. The following publications explain the technique:
+* 
+* - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar, “Leapfrogging and 
+*   Synoptic Leapfrogging: a new optimization approach”, Computers & Chemical 
+*   Engineering, Vol. 40, 11 May 2012, pp. 67-81.
+* 
+* - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart, “Improved 
+*   Initialization of Players in Leapfrogging Optimization”, Computers & 
+*   Chemical Engineering, Vol. 60, 2014, 426-429.
+* 
+* - Rhinehart, R. R., “Convergence Criterion in Optimilsation of Stochastic 
+*   Processes”, Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
+*/
+
 #include <iostream>
 #ifdef _WIN32
     #include <windows.h>
@@ -12,7 +36,10 @@
     #include <dlfcn.h>
     #define HINSTANCE void*
     #define ERR char*
-    #define DLL_PATH "./lpfgopt/leapfrog_c.so"
+    #ifdef __APPLE__
+        #define DLL_PATH "./lpfgopt/leapfrog_c.dylib"
+    #else
+        #define DLL_PATH "./lpfgopt/leapfrog_c.so"
 #endif
 
 

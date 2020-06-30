@@ -1,113 +1,28 @@
 """
-filename       : leapfrog.py
-title          : Leap Frog Optimizer Class
-author         : Mark Redd
-email          : redddogjr@gmail.com
-website        : http://www.r3eda.com/
+filename: leapfrog.py
+Package: lpfgopt
+Author: Mark Redd
+Email: redddogjr@gmail.com
+Website: http://www.r3eda.com/
+About:
+Contains the Leapfrog class for general use in Leapfrog Optimization in Python.
 
-about:
+This algorithm is based the Leapfrogging Optimization Algorithm published 
+by Dr. R. Russell Rhinehart. The following publications explain the technique:
 
-    This optimizer was written based on the algorithm published by
-    Dr. R. Russell Rhinehart.
+- Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar, “Leapfrogging and 
+  Synoptic Leapfrogging: a new optimization approach”, Computers & Chemical 
+  Engineering, Vol. 40, 11 May 2012, pp. 67-81.
 
-    A full explanation of the algorithm can be found at the following URL:
+- Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart, “Improved 
+  Initialization of Players in Leapfrogging Optimization”, Computers & 
+  Chemical Engineering, Vol. 60, 2014, 426-429.
 
-    http://www.r3eda.com/leapfrogging-optimization-algorithm/
-
-    The following are "key references" published on
-    the optimization website explaining the technique:
-
-      - Rhinehart, R. R., M. Su, and U. Manimegalai-Sridhar,
-        “Leapfrogging and Synoptic Leapfrogging: a new optimization approach”,
-        Computers & Chemical Engineering, Vol. 40, 11 May 2012, pp. 67-81.
-
-      - Manimegalai-Sridhar, U., A. Govindarajan, and R. R. Rhinehart,
-        “Improved Initialization of Players in Leapfrogging Optimization”,
-        Computers & Chemical Engineering, Vol. 60, 2014, 426-429.
-
-      - Rhinehart, R. R.,
-        “Convergence Criterion in Optimilsation of Stochastic Processes”,
-        Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
+- Rhinehart, R. R., “Convergence Criterion in Optimilsation of Stochastic 
+  Processes”, Computers & Chemical Engineering, Vol. 68, 4 Sept 2014, pp 1-6.
 
 Example usage:
->>> from leapfrog import LeapFrog
->>>
->>> # optimize a simple, 2-parameter quadratic with a simple linear constraint
-... obj = lambda x: x[0]**2.0 + x[1]**2.0 + 3.0
->>> g1  = lambda x: x[0] + 3
->>>
->>> int2 = [
-...     [-10.0,10.0],
-...     [-10.0,10.0]]
->>>
->>> # Constrained and discrete optimization ----
->>> options = {
-...     "fun"         : obj,
-...     "bounds"      : int2,
-...     "args"        : (),
-...     "points"      : 20,
-...     "fconstraint" : g1,
-...     "discrete"    : [0,1],
-...     "maxit"       : 5000,
-...     "tol"         : 1e-3,
-...     "seedval"     : 1235
-...     }
->>>
->>> lf = LeapFrog(**options)
->>>
->>> print(lf) # BEFORE OPTIMIZATION
-
-Leap Frog Optimizer State:
- best obj      : 12.0
- best point    : [-3, 0]
- fun evals     : 20
- iterations    : 0
- maxcv         : 11
- best          : [12.0, -3, 0]
- worst         : [144.0, 8, -1]
- current error : None
-
->>> x = lf.minimize()
->>> print(lf) # AFTER OPTIMIZATION
-
-Leap Frog Optimizer State:
- best obj      : 12.0
- best point    : [-3, 0]
- fun evals     : 344
- iterations    : 324
- maxcv         : 12.954605769310245
- best          : [12.0, -3, 0]
- worst         : [12.0, -3, 0]
- current error : 0.0
-
->>>
->>> for i in x['pointset']:
-...     print(i)
-...
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
-[12.0, -3, 0]
->>>
 """
-
-
 from random import seed, uniform
 from lpfgopt.opt_result import OptimizeResult
 

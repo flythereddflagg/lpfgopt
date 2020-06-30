@@ -1,3 +1,7 @@
 include README.md
-include lpfgopt/VERSION.txt
+include VERSION
 include docs/*
+include LICENCE.txt
+include lpfgopt/*.dll
+include lpfgopt/*.so
+include lpfgopt/*.dylib
