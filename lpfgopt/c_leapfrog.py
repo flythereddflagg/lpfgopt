@@ -46,7 +46,7 @@ def load_leapfrog_lib():
     """
     root = os.path.dirname(os.path.abspath(__file__))
     ext = WIN_LIB if os.name == 'nt' else UNIX_LIB
-    filename = root + "/leapfrog_c" + WIN_LIB
+    filename = root + "/leapfrog_c" + ext
     cdll = cdll_.LoadLibrary(filename)
     return cdll
 
