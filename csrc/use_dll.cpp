@@ -40,6 +40,7 @@
         #define DLL_PATH "./lpfgopt/leapfrog_c.dylib"
     #else
         #define DLL_PATH "./lpfgopt/leapfrog_c.so"
+	#endif
 #endif
 
 
