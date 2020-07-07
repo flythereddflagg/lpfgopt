@@ -12,7 +12,7 @@ import lpfgopt
 
 
 def readme():
-    with open('README.md', encoding='utf8') as f:
+    with open('./README.md', encoding='utf8') as f:
         return f.read()
 
 config = {

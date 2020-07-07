@@ -17,7 +17,7 @@ This package is based the [*Leapfrogging Optimization Algorithm*](http://www.r3e
 
 ## Installation 
 
-You can install via pip or using the setup.py script in the source code. Instructions are shown below.
+You can install the lite versions via pip or using the setup.py script in the source code. Instructions are shown below.
 
 #### Minimum system Requirements for Installation
 
@@ -48,15 +48,12 @@ If you wish to install locally with `pip` you may do the following:
   ```
 ### Via setup.py
 
-- Download the master branch and unzip the archive or clone it with git.
+- Download the 'lite' branch and unzip the archive or clone it with git.
 - Open the main directory where "setup.py" is located and run the following command:
   ```bash
   $ python setup.py install     # You may need root priviliges or use the --user tag
   ```
-### Test the Installation
-
-The software should be installed correctly. You may validate the installation by executing the following commands in a terminal:
-
+The software should be installed correctly. You may validate the installation by executing the following commands:
 ```python
 $ python
 >>> import lpfgopt

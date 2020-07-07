@@ -43,7 +43,7 @@ from lpfgopt.scipy_min import leapfrog_method
 # get version of lpfgopt
 import os
 mypackage_root_dir = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(mypackage_root_dir, '../VERSION')) as version_file:
+with open(mypackage_root_dir + '/VERSION') as version_file:
     __version__ = version_file.read().strip()
 del os
 
@@ -144,3 +144,13 @@ def minimize(fun, bounds, args=(), points=20, fconstraint=None, discrete=[],
         return c_minimize(**options)
     lf = LeapFrog(**options)
     return lf.minimize()
+
+
+def test_install():
+    print(">>> lpfgopt.__version__\n", __version__)
+    print(
+        ">>> minimize(lambda x: x[0]**2 + 10, [[-10, 10]])['x']\n",
+        minimize(lambda x: x[0]**2 + 10, [[-10, 10]])['x']
+    )
+
+
