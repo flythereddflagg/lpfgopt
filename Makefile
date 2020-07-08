@@ -25,6 +25,8 @@ EXE = -D OUT_EXE
 
 .PHONY: ctest cpptest clean-linux clean-windows clean cleanall execlean-linux execlean-windows
 
+.PHONY: pypi_upload pybuild
+
 all:
 	$(CC) $(CFLAGS) $(DLLFLAGS) ./csrc/leapfrog.c -o ./lpfgopt/leapfrog_c$(DLL) $(EXTRA)
 
@@ -40,6 +42,7 @@ execlean-linux:
 
 clean-linux: execlean-linux
 	rm -f ./lpfgopt/*.so ./lpfgopt/*.dll
+	rm -rf ./build ./dist ./*.egg-info
 
 execlean-windows:
 	del *.exe
@@ -47,8 +50,17 @@ execlean-windows:
 clean-windows: execlean-windows
 	del .\lpfgopt\*.dll
 	del .\lpfgopt\*.so
+	if exist .\build rmdir /S/Q .\build
+	if exist .\dist  rmdir /S/Q .\dist 
+	if exist .\lpfgopt.egg-info rmdir /S/Q .\lpfgopt.egg-info
 
 cleanall: $(CLEANER)
 
 clean: $(EXECLEAN)
+
+pybuild:
+	python setup.py sdist bdist_wheel
+
+pypi_upload: pybuild
+	python -m twine upload dist/*
 

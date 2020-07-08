@@ -25,7 +25,7 @@ config = {
     'download_url'         : 'https://github.com/flythereddflagg/lpfgopt',
     'python_requires'      : '>=3.6',
     'install_requires'     : [],
-    'packages'             : ['lpfgopt'],
+    'packages'             : setuptools.find_packages(),
     'scripts'              : [],
     'long_description'     : readme(),
     'long_description_'\

@@ -1,4 +1,4 @@
-python .\setup.py sdist
-# --universal for python 2 and 3 with pure python
-python setup.py bdist_wheel --universal 
+#!/bin/bash
+
+python setup.py sdist bdist_wheel
 python -m twine upload dist/*
